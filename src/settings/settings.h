@@ -6,15 +6,22 @@
 /*
  * All settings that parametrize a simulation run.
  */
+enum Kernel
+{
+    GAUSSIAN
+};
+
+
 struct Settings
 {
     std::array<double, 2> physicalSize;         //< physical size of the domain
     double kappa = 4;                           //< gas constant
     double m = 10.0;                            //< mass of an individual particle
     double mu = 4;                              //< kinematic viscosity of the fluid
+    double dt = 0.1;                            //<
 
     std::array<double, 2> g{0., 0.};            //< external forces
-    std::string kernelFunction = "GAUSSIAN";    //< specifies which kernel function to use
+    Kernel kernelFunction = Kernel::GAUSSIAN;   //< specifies which kernel function to use //TODO make class
 
 
     std::array<double, 2> dirichletBcBottom; //< prescribed values of u,v at bottom of domain
