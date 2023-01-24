@@ -7,5 +7,4 @@ struct Particle {
     double pressure;
     Vec position;
     Vec velocity;
-    //findNeighbours(Collection<Particle>, Kernel kernel)
 };
