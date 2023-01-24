@@ -1,15 +1,11 @@
 #pragma once
 
-class Particle {
-public:
+template<typename Vec>
+struct Particle {
     double mass;
     double rho;
     double pressure;
-
-
-
-
-
-
+    Vec position;
+    Vec velocity;
     //findNeighbours(Collection<Particle>, Kernel kernel)
 };
