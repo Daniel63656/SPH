@@ -1,7 +1,7 @@
 #include "simulation.h"
 
-template<typename V>
-void Simulation<V>::step(double dt) {
+template<unsigned int N>
+void Simulation<N>::step(double dt) {
     //sort particles into cells
     /*for (auto& p : particles)
     {

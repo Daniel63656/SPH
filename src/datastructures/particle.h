@@ -1,10 +1,12 @@
 #pragma once
 
-template<typename Vec>
+#include "vector.h"
+
+template <unsigned int N>
 struct Particle {
     double mass;
     double rho;
     double pressure;
-    Vec position;
-    Vec velocity;
+    Vector<N> position;
+    Vector<N> velocity;
 };

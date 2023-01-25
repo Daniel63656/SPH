@@ -1,17 +1,17 @@
 #pragma once
 
 #include <vector>
-#include "datastructures/grid.h"
+#include "../datastructures/grid.h"
 
-template<typename V>
+template<unsigned int N>
 class Simulation
 {
 public:
     void step(double dt);
 
 private:
-    std::vector<Particle<V>> particles;
-    Grid<V> grid;
+    std::vector<Particle<N>> particles;
+    Grid<N> grid;
 
     void update();
 };

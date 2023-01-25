@@ -4,7 +4,7 @@
 #include <vector>
 #include "particle.h"
 
-template<typename Vec>
+template <unsigned int N>
 class Grid
 {
 public:
@@ -15,8 +15,8 @@ public:
 
 private:
     int m_length;
-    Vec dimensions;
-    std::vector<std::vector<Particle<Vec>>> particles;
+    Vector<N> dimensions;
+    std::vector<std::vector<Particle<N>>> particles;
 
-    int calcIndex(Vec vec);
+    int calcIndex(Vector<N> v);
 };
