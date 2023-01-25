@@ -9,7 +9,6 @@ add_executable(${PROJECT_NAME}
         datastructures/particle.cpp
         kernelFunctions/cubicSpline.cpp
         kernelFunctions/gaussian.cpp
-        kernelFunctions/kernelFunction.cpp
         settings/settings.cpp
         simulation/simulation.cpp)
 

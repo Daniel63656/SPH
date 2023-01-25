@@ -8,11 +8,23 @@ template <unsigned int N>
 class Grid
 {
 public:
-    Grid();
+    Grid() {
+        nCells = 10;
+        for (int i = 0; i < N; i++)
+        {
+            meshWidth[i] = physicalSize[i] / size[i];
+            nCells *= size[i];
+        }
+
+        grid.reserve(nCells);
+        for (int i = 0; i < nCells; i++)
+            grid.push_back(std::vector<Particle<N>>());
+    }
+
+
     void clear();
 
     void add(Particle<N> p);
-    void remove(Particle<N> p);
 
     std::vector<Particle<N>> neighbours(Particle<N> center, float radius);
 
@@ -26,6 +38,9 @@ private:
 
     std::vector<std::vector<Particle<N>>> grid;
 
-    int calcIndex(Vector<N> v);
-    int pos2idx(Vector<N> pos);
+    std::array<int, N> discretizedPosition(Vector<N> v);
+    int pos2idx(std::array<int, N> pos);
+
+    void searchDimension(int dim, std::array<int, N> start, std::array<int, N> end, int* idx,
+                         Particle<N> center, double radius, std::vector<Particle<N>>& neighbours);
 };

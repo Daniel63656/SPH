@@ -2,15 +2,15 @@
 
 #include "kernelFunction.h"
 
-class CubicSpline : public KernelFunction
+template<unsigned int N>
+class CubicSpline : public KernelFunction<N>
 {
 public:
-    CubicSpline(float smoothing, int dimensions);
-
-    float   W(float distance) override;
-    float  dW(float distance) override;
-    float d2W(float distance) override;
-    float effectiveRadius() override;
+    CubicSpline(float smoothing);
+    double W(Vector<N> difference) override;
+    Vector<N> gradW(Vector<N> difference) override;
+    double laplaceW(Vector<N> difference) override;
+    double effectiveRadius() override;
 
 private:
     float alpha;

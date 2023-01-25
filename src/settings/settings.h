@@ -8,7 +8,11 @@
  * All settings that parametrize a simulation run.
  */
 
-template<class K, unsigned int N>
+enum Kernel {
+    CUBIC_SPLINE, GAUSSIAN
+};
+
+template<unsigned int N>
 struct Settings
 {
     // constants
@@ -16,9 +20,10 @@ struct Settings
     double rho_0 = 3;                           //< rest density at zero pressure
     double m = 10.0;                            //< mass of an individual particle
     double mu = 4;                              //< kinematic viscosity of the fluid
+    int numberOfParticles = 100;
 
     // domain
-    std::array<double, 2> physicalSize;         //< physical size of the domain
+    std::array<double, 2> physicalSize{};         //< physical size of the domain
     //TODO boundary consditions
 
     // time
@@ -27,8 +32,8 @@ struct Settings
     double dt = 0.1;
 
     //miscellaneous
-    Vector<N> g = 0.0;                          //< external forces
-    //K &kernelFunction = Gaussian(4, N);
+    Vector<N> g;                          //< external forces
+    Kernel kernelFunction = GAUSSIAN;
 
 
     //! parse a text file with settings, each line contains "<parameterName> = <value>"

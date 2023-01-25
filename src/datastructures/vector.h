@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 
-//! vector class to do basic vvector operations and hold N entries
+//! vector class to do basic vector operations and hold N entries
 template <unsigned int N> class Vector;
 template <unsigned int N> std::ostream& operator<< (std::ostream&, const Vector<N>&);
 
@@ -22,6 +22,13 @@ public:
 
     //! get the number of elements
     int size() const { return N; };
+
+    double magnitude() {
+        double res = 0;
+        for(int i = 0; i < N; i++)
+            res += data[i]*data[i];
+        return sqrt(res);
+    }
 
     //! access value at idx, declared not const, so the value can be changed
     double& operator[](int idx) { return data[idx]; }

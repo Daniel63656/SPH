@@ -10,5 +10,5 @@ struct Particle {
     Vector<N> position;
     Vector<N> velocity;
 
-    Vector<N> forces;       //vector to store calculated forces in each time step
+    Vector<N> forces;       //vector to store calculated forces in each time run
 };

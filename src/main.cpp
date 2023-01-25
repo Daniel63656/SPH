@@ -1,22 +1,37 @@
 #include <iostream>
+#include <array>
+#include <memory>
 #include "datastructures/vector.h"
+#include "settings/settings.h"
+#include "simulation/simulation.h"
+#include "kernelFunctions/gaussian.h"
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
-    //! read parameterFiles (these may be reassigned in UI)
-    //! main file to start a simulation
+    // try to read simulation parameters
+    if (argc == 1)
+    {
+        std::cout << "usage: " << argv[0] << " <filename>" << std::endl;
+        return EXIT_FAILURE;
+    }
+    // read in the first argument
+    std::string filename = argv[1];
+    std::cout << "Parameters imported from: \"" << filename << "\"" << std::endl;
 
+    Vector<2> t = Vector<2>();
+    t = 0;
 
-    Vector<2> v = Vector<2>({1, 0});
-    Vector<2> w = Vector<2>({0, 1});
+    std::cout << t << std::endl;
 
-    v = w;
-    v *= 3;
-    w[0] = 9;
+    // instantiate settings object
+    Settings<2> settings;
+    //settings.loadFromFile(filename);
+    //settings.printSettings();
 
+    std::shared_ptr<KernelFunction<2>> kernel = std::make_shared<Gaussian<2>>(6);
+    Simulation<2, Gaussian<2>> simulation(settings, kernel);
+    //simulation.run();
 
-    std::cout << "v: " << v << std::endl;
-    std::cout << "w: " << w << std::endl;
     return 0;
 }

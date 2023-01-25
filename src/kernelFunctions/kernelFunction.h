@@ -1,17 +1,26 @@
 #pragma once
 
-//! all kernel functions based of the paper "Smoothed Particle Hydrodynamics (SPH): an Overview and Recent Developments"
+//! all m_kernel functions based of the paper "Smoothed Particle Hydrodynamics (SPH): an Overview and Recent Developments"
 //! https://link.springer.com/article/10.1007/s11831-010-9040-7
+
+#include "../datastructures/vector.h"
+
+template<unsigned int N>
 class KernelFunction
 {
 public:
-    KernelFunction(float smoothing);
+    explicit KernelFunction(float smoothing);
 
-    virtual float  W(float distance) = 0;
-    virtual float  dW(float distance) = 0;
-    virtual float d2W(float distance) = 0;
-    virtual float effectiveRadius() = 0;
+    virtual double W(Vector<N> difference) = 0;
+    virtual Vector<N> gradW(Vector<N> difference) = 0;
+    virtual double laplaceW(Vector<N> difference) = 0;
+    virtual double effectiveRadius() = 0;
 
 protected:
-    float h;
+    double h;
 };
+
+template<unsigned int N>
+KernelFunction<N>::KernelFunction(float smoothing) :
+    h{smoothing}
+    {}
