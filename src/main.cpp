@@ -9,10 +9,14 @@ int main() {
 
 
     Vector<2> v = Vector<2>({1, 0});
-    Vector<2> w = Vector<2>({1, 1});
+    Vector<2> w = Vector<2>({0, 1});
 
-    float f = euclideanDistance(v, w);
+    v = w;
+    v *= 3;
+    w[0] = 9;
 
-    std::cout << "dist: " << f << std::endl;
+
+    std::cout << "v: " << v << std::endl;
+    std::cout << "w: " << w << std::endl;
     return 0;
 }

@@ -2,32 +2,34 @@
 
 #include <array>
 #include <string>
+#include "../datastructures/vector.h"
 
 /*
  * All settings that parametrize a simulation run.
  */
-enum Kernel
-{
-    GAUSSIAN
-};
 
-
+template<class K, unsigned int N>
 struct Settings
 {
-    std::array<double, 2> physicalSize;         //< physical size of the domain
+    // constants
     double kappa = 4;                           //< gas constant
+    double rho_0 = 3;                           //< rest density at zero pressure
     double m = 10.0;                            //< mass of an individual particle
     double mu = 4;                              //< kinematic viscosity of the fluid
-    double dt = 0.1;                            //<
 
-    std::array<double, 2> g{0., 0.};            //< external forces
-    Kernel kernelFunction = Kernel::GAUSSIAN;   //< specifies which kernel function to use //TODO make class
+    // domain
+    std::array<double, 2> physicalSize;         //< physical size of the domain
+    //TODO boundary consditions
 
+    // time
+    double startTime = 0;
+    double endTime = 10;
+    double dt = 0.1;
 
-    std::array<double, 2> dirichletBcBottom; //< prescribed values of u,v at bottom of domain
-    std::array<double, 2> dirichletBcTop;    //< prescribed values of u,v at top of domain
-    std::array<double, 2> dirichletBcLeft;   //< prescribed values of u,v at left of domain
-    std::array<double, 2> dirichletBcRight;  //< prescribed values of u,v at right of domain
+    //miscellaneous
+    Vector<N> g = 0.0;                          //< external forces
+    //K &kernelFunction = Gaussian(4, N);
+
 
     //! parse a text file with settings, each line contains "<parameterName> = <value>"
     void loadFromFile(std::string filename);

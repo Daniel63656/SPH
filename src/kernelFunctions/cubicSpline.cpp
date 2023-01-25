@@ -50,3 +50,7 @@ float CubicSpline::d2W(float distance) {
     }
     else return 0;
 }
+
+float CubicSpline::effectiveRadius() {
+    return 2*h;
+}

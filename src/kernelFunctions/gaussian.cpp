@@ -41,3 +41,7 @@ float Gaussian::d2W(float distance) {
     }
     else return 0;
 }
+
+float Gaussian::effectiveRadius() {
+    return 3*h;
+}

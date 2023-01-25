@@ -10,6 +10,7 @@ public:
     virtual float  W(float distance) = 0;
     virtual float  dW(float distance) = 0;
     virtual float d2W(float distance) = 0;
+    virtual float effectiveRadius() = 0;
 
 protected:
     float h;
