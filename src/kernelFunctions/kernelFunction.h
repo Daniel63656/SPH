@@ -5,22 +5,17 @@
 
 #include "../datastructures/vector.h"
 
-template<unsigned int N>
 class KernelFunction
 {
 public:
-    explicit KernelFunction(float smoothing);
+    explicit KernelFunction(double smoothing) : h{smoothing}
+    {}
 
-    virtual double W(Vector<N> difference) const = 0;
-    virtual Vector<N> gradW(Vector<N> difference) const = 0;
-    virtual double laplaceW(Vector<N> difference) const = 0;
+    virtual double W(Vector<2> difference) const = 0;
+    virtual Vector<2> gradW(Vector<2> difference) const = 0;
+    virtual double laplaceW(Vector<2> difference) const = 0;
     virtual double effectiveRadius() const = 0;
 
 protected:
     double h;
 };
-
-template<unsigned int N>
-KernelFunction<N>::KernelFunction(float smoothing) :
-    h{smoothing}
-    {}

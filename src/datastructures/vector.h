@@ -38,25 +38,25 @@ public:
     const double& operator[](int idx) const { return data[idx]; }
 
     //! non symmetric mathematical operators
-    Vector<N>& operator+=(const Vector<N>& v){
+    Vector<N>& operator+=(const Vector<N>& v) {
         for(int i = 0; i < N; i++)
             data[i] += v.data[i];
         return *this;
     }
 
-    Vector<N>& operator-=(const Vector<N>& v){
+    Vector<N>& operator-=(const Vector<N>& v) {
         for(int i = 0; i < N; i++)
             data[i] -= v.data[i];
         return *this;
     }
 
-    Vector<N>& operator*=(double scalar){
+    Vector<N>& operator*=(double scalar) {
         for(int i = 0; i < N; i++)
             data[i] *= scalar;
         return *this;
     }
 
-    Vector<N>& operator/=(double scalar){
+    Vector<N>& operator/=(double scalar) {
         for(int i = 0; i < N; i++)
             data[i] /= scalar;
         return *this;
@@ -97,7 +97,7 @@ Vector<N> operator*(const Vector<N>& v, double d) {
     return res;
 }
 template <unsigned int N>
-Vector<N> operator*(double d, const Vector<N>& v){
+Vector<N> operator*(double d, const Vector<N>& v) {
     return v*d;
 }
 
@@ -119,9 +119,11 @@ double euclideanDistance(const Vector<N>& v1, const Vector<N>& v2)
 }
 
 //! print on console
-template <unsigned N> std::ostream& operator<<(std::ostream& os, const Vector<N>& v){
+template <unsigned N> std::ostream& operator<<(std::ostream& os, const Vector<N>& v)
+{
     os << "[";
-    for(unsigned i = 0; i < N; i++){
+    for(unsigned i = 0; i < N; i++)
+    {
         os << v.data[i];
         if(i != N - 1) os << ", ";
     }

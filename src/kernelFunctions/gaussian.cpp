@@ -1,65 +1,57 @@
 #include "gaussian.h"
 #include <cmath>
-#include <stdexcept>
 
 
 //! Gaussian function with effective radius of 3*smoothing
-template<unsigned int N>
-Gaussian<N>::Gaussian(float smoothing) : KernelFunction<N>(smoothing)
+Gaussian::Gaussian(double smoothing) : KernelFunction(smoothing)
 {
-    switch (N) {
-        case 1:
-            alpha = 1/this->h; break;
-        case 2:
-            alpha = 15/(float)(7*M_PI*this->h*this->h); break;
-        case 3:
-            alpha = 3/(float)(2*M_PI*pow(this->h, 3)); break;
-        default:
-            throw std::invalid_argument("Number of dimensions not supported!");
-    }
+    //1d    alpha = 1/(sqrt(M_PI)*h);
+    alpha = 1/(M_PI*h*h);
+    //3d    alpha = 1/(sqrt(pow(M_PI, 3))*pow(h, 3));
 }
 
-
-template<unsigned int N>
-double Gaussian<N>::W(Vector<N> difference) {
-    float R = difference.magnitude()/this->h;
-    if (R <= 3) {
-        return alpha * std::exp(-R * R);
+double Gaussian::W(Vector<2> difference) const {
+    double R = difference.magnitude()/h;
+    if (R <= 3)
+    {
+        return alpha * exp(-R * R);
     }
     else return 0;
 }
 
-template<unsigned int N>
-Vector<N> Gaussian<N>::gradW(Vector<N> difference) {
-    float R = difference.magnitude()/this->h;
+
+Vector<2> Gaussian::gradW(Vector<2> difference) const {
+    double R = difference.magnitude()/h;
+    Vector<2> res = Vector<2>();
     if (R <= 3) {
-        double factor = -2 * alpha / (this->h*this->h) * std::exp(-R * R);
-        Vector<N> res = Vector<N>();
-        for (int i = 0; i < N; i++)
+        double factor = -2 / (h*h) * exp(-R * R);
+        for (int i = 0; i < 2; i++)
         {
-            res[i] = factor * difference[i];
+            res[i] = alpha*factor * difference[i];
         }
         return res;
     }
-    else return 0;
+    else {
+        res = 0;
+        return res;
+    }
 }
 
-template<unsigned int N>
-double Gaussian<N>::laplaceW(Vector<N> difference) {
-    float R = difference.magnitude()/this->h;
+
+double Gaussian::laplaceW(Vector<2> difference) const {
+    double R = difference.magnitude()/h;
     if (R <= 3) {
-        double factor = 4 * alpha/pow(this->h, 4) * std::exp(-R * R);
         double res = 0;
-        for (int i = 0; i < N; i++)
+        for (int i = 0; i < 2; i++)
         {
-            res += factor * difference[i];
+            res += alpha * (4*difference[i]*difference[i] - 2*h*h)/pow(h, 4) * exp(-R * R);
         }
         return res;
     }
     else return 0;
 }
 
-template<unsigned int N>
-double Gaussian<N>::effectiveRadius() {
-    return 3*this->h;
+
+double Gaussian::effectiveRadius() const {
+    return 3*h;
 }

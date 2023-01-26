@@ -12,7 +12,7 @@ enum Kernel {
     CUBIC_SPLINE, GAUSSIAN
 };
 
-template<unsigned int N>
+
 struct Settings
 {
     // constants
@@ -23,8 +23,9 @@ struct Settings
     int numberOfParticles = 100;
 
     // domain
-    std::array<double, 2> physicalSize{};         //< physical size of the domain
-    //TODO boundary consditions
+    std::array<int, 2> size;                    //< number of cells in all spacial directions
+    std::array<double, 2> physicalSize;         //< dimensions of the domain
+    //TODO boundary conditions
 
     // time
     double startTime = 0;
@@ -32,7 +33,7 @@ struct Settings
     double dt = 0.1;
 
     //miscellaneous
-    Vector<N> g;                          //< external forces
+    Vector<2> g;                          //< external forces
     Kernel kernelFunction = GAUSSIAN;
 
 

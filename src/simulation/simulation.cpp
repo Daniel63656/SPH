@@ -1,18 +1,21 @@
 #include "simulation.h"
 
 
-template<unsigned int N>
-Simulation<N>::Simulation(const Settings<N> &settings, const KernelFunction<N>* kernel) :
+Simulation::Simulation(const Settings &settings, const KernelFunction* kernel) :
         m_kernel{kernel},
         m_settings{settings},
-        time{settings.startTime}
+        time{settings.startTime},
+        grid(settings)
 {
     initializeParticles();
 }
 
 
-template<unsigned int N>
-void Simulation<N>::run()
+void Simulation::initializeParticles() {
+    //TODO initialize uniformly
+}
+
+void Simulation::run()
 {
     while (time < m_settings.endTime) {
         calculateDensityAndPressure();
@@ -24,13 +27,12 @@ void Simulation<N>::run()
 }
 
 
-template<unsigned int N>
-void Simulation<N>::calculateDensityAndPressure() {
+void Simulation::calculateDensityAndPressure() {
 
-    for (Particle<N>& p_i : particles)
+    for (Particle& p_i : particles)
     {
-        float rho = 0;
-        for (Particle<N>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
+        double rho = 0;
+        for (Particle& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
             rho += p_j.mass * m_kernel->W(p_i.position - p_j.position);
         }
@@ -41,12 +43,11 @@ void Simulation<N>::calculateDensityAndPressure() {
 }
 
 
-template<unsigned int N>
-void Simulation<N>::calculateForces() {
-    for (Particle<N>& p_i : particles)
+void Simulation::calculateForces() {
+    for (Particle& p_i : particles)
     {
         p_i.forces = p_i.rho*m_settings.g;
-        for (Particle<N>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
+        for (Particle& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
             double vol_i = p_i.mass/p_i.rho;
             double vol_j = p_j.mass/p_j.rho;
@@ -58,9 +59,8 @@ void Simulation<N>::calculateForces() {
 }
 
 
-template<unsigned int N>
-void Simulation<N>::updateParticles() {
-    for (Particle<N>& p_i : particles)
+void Simulation::updateParticles() {
+    for (Particle& p_i : particles)
     {
         p_i.velocity += m_settings.dt/p_i.rho * p_i.forces;
         p_i.position += m_settings.dt*p_i.velocity;
@@ -68,7 +68,7 @@ void Simulation<N>::updateParticles() {
 
     //resort Particles into grid datastructure based on updated positions
     grid.clear();
-    for (Particle<N> p : particles)
+    for (Particle p : particles)
     {
         grid.add(p);
     }
@@ -76,6 +76,3 @@ void Simulation<N>::updateParticles() {
 
     //calculate velocity field???
 }
-
-
-template class Simulation<2>;

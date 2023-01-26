@@ -2,18 +2,16 @@
 
 #include "kernelFunction.h"
 
-template<unsigned int N>
-class Gaussian : public KernelFunction<N>
+class Gaussian : public KernelFunction
 {
 public:
-    Gaussian(float smoothing);
+    explicit Gaussian(double smoothing);
 
-
-    virtual double W(Vector<N> difference);
-    virtual Vector<N> gradW(Vector<N> difference);
-    virtual double laplaceW(Vector<N> difference);
-    virtual double effectiveRadius();
+    double W(Vector<2> difference) const override;
+    Vector<2> gradW(Vector<2> difference) const override;
+    double laplaceW(Vector<2> difference) const override;
+    double effectiveRadius() const override;
 
 private:
-    float alpha;
+    double alpha;
 };

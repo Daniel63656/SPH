@@ -2,13 +2,13 @@
 
 #include "vector.h"
 
-template <unsigned int N>
-struct Particle {
+struct Particle
+{
     double mass;
     double rho;
     double pressure;
-    Vector<N> position;
-    Vector<N> velocity;
+    Vector<2> position;
+    Vector<2> velocity;
 
-    Vector<N> forces;       //vector to store calculated forces in each time run
+    Vector<2> forces;       //vector to store calculated forces in each time run
 };

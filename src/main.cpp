@@ -24,14 +24,20 @@ int main(int argc, char *argv[]) {
 
     std::cout << t << std::endl;
 
+
+    Vector<2> v = Vector<2>();
+    Vector<3> w = Vector<3>();
+
+
+
     // instantiate settings object
-    Settings<2> settings;
+    Settings settings;
     //settings.loadFromFile(filename);
     //settings.printSettings();
 
-    Gaussian<2> kernel(4);
+    Gaussian kernel(4);
 
-    Simulation<2> simulation(settings, &kernel);
+    Simulation simulation(settings, &kernel);
     simulation.run();
 
     return 0;
