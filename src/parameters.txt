@@ -1,0 +1,26 @@
+# Settings file for numsim program
+# Run ./numsim lid_driven_cavity.txt
+
+# constants
+kappa = 2.0                     # gas constant
+rho0 = 2.0
+mass = 10                       # mass of the individual particle
+mu = 9                          # kinematic viscosity of the fluid
+numberOfParticles = 100         # number of particles used in the simulation
+
+# domain
+nCellsX = 100                   # number of cells in all spacial directions
+nCellsY = 100
+physicalSizeX = 2.0             # physical size of the domain
+physicalSizeY = 2.0
+
+# time
+startTime = 0
+endTime = 10.0
+dt = 0.001
+
+# misc
+gX = 0.0                        # external forces, set to (gX,gY) = (0,-9.81) to account for gravity
+gY = 0.0
+kernelFunction = Gaussian       # specify which kernel function gets used
+smoothness = 5.0                # specify kernels smoothing term

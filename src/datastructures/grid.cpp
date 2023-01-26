@@ -6,8 +6,8 @@ Grid::Grid(const Settings& settings) : m_settings{settings}
     nCells = 1;
     for (int i = 0; i < 2; i++)
     {
-        meshWidth[i] = m_settings.physicalSize[i] / m_settings.size[i];
-        nCells *= m_settings.size[i];
+        meshWidth[i] = m_settings.physicalSize[i] / m_settings.nCells[i];
+        nCells *= m_settings.nCells[i];
     }
 
     grid.reserve(nCells);
@@ -72,7 +72,7 @@ int Grid::pos2idx(std::array<int, 2> pos)
     int factor = 1;
     for (int i = 1; i < pos.size(); i++)
     {
-        factor *= m_settings.size[i-1];
+        factor *= m_settings.nCells[i - 1];
         idx += factor*pos[i];
     }
     return idx;

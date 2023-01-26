@@ -19,26 +19,15 @@ int main(int argc, char *argv[]) {
     std::string filename = argv[1];
     std::cout << "Parameters imported from: \"" << filename << "\"" << std::endl;
 
-    Vector<2> t = Vector<2>();
-    t = 0;
-
-    std::cout << t << std::endl;
-
-
-    Vector<2> v = Vector<2>();
-    Vector<3> w = Vector<3>();
-
-
-
     // instantiate settings object
     Settings settings;
-    //settings.loadFromFile(filename);
-    //settings.printSettings();
+    settings.loadFromFile(filename);
+    settings.printSettings();
 
-    Gaussian kernel(4);
+    Gaussian kernel(settings.smoothness);
 
     Simulation simulation(settings, &kernel);
-    simulation.run();
+    //simulation.run();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

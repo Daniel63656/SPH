@@ -8,22 +8,18 @@
  * All settings that parametrize a simulation run.
  */
 
-enum Kernel {
-    CUBIC_SPLINE, GAUSSIAN
-};
-
 
 struct Settings
 {
     // constants
     double kappa = 4;                           //< gas constant
     double rho_0 = 3;                           //< rest density at zero pressure
-    double m = 10.0;                            //< mass of an individual particle
+    double mass = 10.0;                         //< mass of an individual particle
     double mu = 4;                              //< kinematic viscosity of the fluid
     int numberOfParticles = 100;
 
     // domain
-    std::array<int, 2> size;                    //< number of cells in all spacial directions
+    std::array<int, 2> nCells;                  //< number of cells in all spacial directions
     std::array<double, 2> physicalSize;         //< dimensions of the domain
     //TODO boundary conditions
 
@@ -34,11 +30,12 @@ struct Settings
 
     //miscellaneous
     Vector<2> g;                          //< external forces
-    Kernel kernelFunction = GAUSSIAN;
+    std::string kernelFunction = "GAUSSIAN";
+    double smoothness;
 
 
     //! parse a text file with settings, each line contains "<parameterName> = <value>"
-    void loadFromFile(std::string filename);
+    void loadFromFile(const std::string& filename);
 
     //! output all settings to console
     void printSettings();
