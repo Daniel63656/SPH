@@ -9,15 +9,15 @@ mu = 9                          # kinematic viscosity of the fluid
 numberOfParticles = 100         # number of particles used in the simulation
 
 # domain
-nCellsX = 100                   # number of cells in all spacial directions
-nCellsY = 100
 physicalSizeX = 2.0             # physical size of the domain
 physicalSizeY = 2.0
+nCellsX = 100                   # number of cells in all spacial directions
+nCellsY = 100
 
 # time
 startTime = 0
 endTime = 10.0
-dt = 0.001
+dt = 0.1
 
 # misc
 gX = 0.0                        # external forces, set to (gX,gY) = (0,-9.81) to account for gravity

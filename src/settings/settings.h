@@ -19,8 +19,8 @@ struct Settings
     int numberOfParticles = 100;
 
     // domain
-    std::array<int, 2> nCells;                  //< number of cells in all spacial directions
     std::array<double, 2> physicalSize;         //< dimensions of the domain
+    std::array<int, 2> nCells{};                //< number of cells in all spacial directions
     //TODO boundary conditions
 
     // time

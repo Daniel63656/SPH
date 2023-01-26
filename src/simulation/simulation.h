@@ -13,6 +13,8 @@ class Simulation
 public:
     Simulation(const Settings& settings, const KernelFunction* kernel);
 
+    void initializeParticles();
+
     void run();
 
 
@@ -21,10 +23,8 @@ private:
     const KernelFunction* m_kernel;
     double time;
 
-    std::vector<Particle> particles;
     Grid grid;
-
-    void initializeParticles();
+    std::vector<std::shared_ptr<Particle>> particles;
 
     void calculateDensityAndPressure();
     void calculateForces();
