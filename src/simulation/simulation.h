@@ -7,24 +7,18 @@
 #include "../settings/settings.h"
 #include "../kernelFunctions/gaussian.h"
 
-template<unsigned int N, typename K>
+template<unsigned int N>
 class Simulation
 {
 public:
-    Simulation(Settings<N>& settings, const std::shared_ptr<KernelFunction<N>>& kernel) :
-            m_kernel{kernel},
-            m_settings{settings},
-            time{settings.startTime}
-    {
-        initializeParticles();
-    }
+    Simulation(const Settings<N>& settings, const KernelFunction<N>* kernel);
 
     void run();
 
 
 private:
     const Settings<N>& m_settings;
-    const std::shared_ptr<KernelFunction<N>>& m_kernel;
+    const KernelFunction<N>* m_kernel;
     double time;
 
     std::vector<Particle<N>> particles;

@@ -11,10 +11,10 @@ class KernelFunction
 public:
     explicit KernelFunction(float smoothing);
 
-    virtual double W(Vector<N> difference) = 0;
-    virtual Vector<N> gradW(Vector<N> difference) = 0;
-    virtual double laplaceW(Vector<N> difference) = 0;
-    virtual double effectiveRadius() = 0;
+    virtual double W(Vector<N> difference) const = 0;
+    virtual Vector<N> gradW(Vector<N> difference) const = 0;
+    virtual double laplaceW(Vector<N> difference) const = 0;
+    virtual double effectiveRadius() const = 0;
 
 protected:
     double h;

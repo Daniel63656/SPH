@@ -47,7 +47,7 @@ void Grid<N>::searchDimension(int dim, std::array<int, N> start, std::array<int,
 }
 
 template<unsigned int N>
-std::vector<Particle<N>> Grid<N>::neighbours(Particle<N> center, float radius) {
+std::vector<Particle<N>> Grid<N>::neighbours(Particle<N> center, double radius) {
     std::vector<Particle<N>> neighbours;
     std::array<int, N> start = discretizedPosition(center.position -= radius);
     std::array<int, N> end   = discretizedPosition(center.position += radius);

@@ -9,7 +9,8 @@ template <unsigned int N> class Vector;
 template <unsigned int N> std::ostream& operator<< (std::ostream&, const Vector<N>&);
 
 
-template <unsigned int N> class Vector {
+template <unsigned int N>
+class Vector {
 public:
     Vector() = default;
     Vector(std::initializer_list<double> elements) {

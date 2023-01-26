@@ -26,7 +26,7 @@ public:
 
     void add(Particle<N> p);
 
-    std::vector<Particle<N>> neighbours(Particle<N> center, float radius);
+    std::vector<Particle<N>> neighbours(Particle<N> center, double radius);
 
 
 

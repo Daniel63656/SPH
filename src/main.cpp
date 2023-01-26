@@ -29,9 +29,10 @@ int main(int argc, char *argv[]) {
     //settings.loadFromFile(filename);
     //settings.printSettings();
 
-    std::shared_ptr<KernelFunction<2>> kernel = std::make_shared<Gaussian<2>>(6);
-    Simulation<2, Gaussian<2>> simulation(settings, kernel);
-    //simulation.run();
+    Gaussian<2> kernel(4);
+
+    Simulation<2> simulation(settings, &kernel);
+    simulation.run();
 
     return 0;
 }
