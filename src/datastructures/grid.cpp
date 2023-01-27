@@ -60,7 +60,9 @@ std::array<int, 2> Grid::discretizedPosition(Vector<2> v) {
     for (int i = 0; i < 2; i++)
     {
         discretePos[i] = int(v[i]/meshWidth[i]);
-        //TODO limiting necessary?
+        //TODO this is just a temporary hack. Particles need to be stopped from leaving the domain in the first place!
+        discretePos[i] = (discretePos[i]<0) ? 0 : discretePos[i];
+        discretePos[i] = (discretePos[i]>=m_settings.nCells[i]) ? m_settings.nCells[i]-1 : discretePos[i];
     }
     return discretePos;
 }

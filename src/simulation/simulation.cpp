@@ -33,6 +33,10 @@ void Simulation::initializeParticles()
 void Simulation::run()
 {
     while (time < m_settings.endTime) {
+
+        if (time > 3.2)
+            std::cout << "*********************\n";
+
         calculateDensityAndPressure();
         calculateForces();
         updateParticles();
@@ -48,11 +52,14 @@ void Simulation::calculateDensityAndPressure() {
     for (const std::shared_ptr<Particle>& p_i : particles)
     {
         double rho = 0;
+        bool hasNeighbours = false;
         for (const std::shared_ptr<Particle>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
+            hasNeighbours = true;
             rho += p_j->mass * m_kernel->W(p_i->position - p_j->position);
         }
 
+        assert(hasNeighbours);
         p_i->rho = rho;
         p_i->pressure = m_settings.kappa*(pow(rho/m_settings.rho_0, 7) - 1);
     }
@@ -65,9 +72,6 @@ void Simulation::calculateForces() {
         p_i->forces = p_i->rho*m_settings.g;
         for (const std::shared_ptr<Particle>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
-            assert(p_i->rho != 0);
-            assert(p_j->rho != 0);
-
             double vol_i = p_i->mass/p_i->rho;
             double vol_j = p_j->mass/p_j->rho;
 
@@ -81,7 +85,6 @@ void Simulation::calculateForces() {
 void Simulation::updateParticles() {
     for (const std::shared_ptr<Particle>& p_i : particles)
     {
-        assert(p_i->rho != 0);
         p_i->velocity += m_settings.dt/p_i->rho * p_i->forces;
         p_i->position += m_settings.dt*p_i->velocity;
     }
