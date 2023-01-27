@@ -30,22 +30,26 @@ void Simulation::initializeParticles()
     }
 }
 
-void Simulation::run()
+void Simulation::run(VtkWriter *vtkWriter)
 {
     while (time < m_settings.endTime) {
-
-        if (time > 3.2)
-            std::cout << "*********************\n";
-
         calculateDensityAndPressure();
         calculateForces();
         updateParticles();
 
         time += m_settings.dt;
         std::cout << "timestep t=" << time << "\n";
+
+        if (vtkWriter != nullptr) {
+            vtkWriter->writeFile(time);
+        }
     }
 }
 
+
+Grid& Simulation::getGrid() {
+    return grid;
+}
 
 void Simulation::calculateDensityAndPressure() {
 

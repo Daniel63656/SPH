@@ -6,6 +6,7 @@
 #include "../kernelFunctions/kernelFunction.h"
 #include "../settings/settings.h"
 #include "../kernelFunctions/gaussian.h"
+#include "../output_writer/vtk_writer.h"
 
 
 class Simulation
@@ -15,7 +16,12 @@ public:
 
     void initializeParticles();
 
-    void run();
+
+    //! run the simulation
+    //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
+    void run(VtkWriter* vtkWriter = nullptr);
+
+    Grid& getGrid();
 
 
 private:

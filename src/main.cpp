@@ -3,11 +3,11 @@
 #include "settings/settings.h"
 #include "simulation/simulation.h"
 #include "kernelFunctions/gaussian.h"
+#include "output_writer/vtk_writer.h"
 
 
 int main(int argc, char *argv[])
 {
-
     // try to read simulation parameters
     if (argc == 1)
     {
@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
     Gaussian kernel(settings.smoothness);
 
     Simulation simulation(settings, &kernel);
-    simulation.run();
+    VtkWriter vtkWriter(simulation.getGrid());
+
+    simulation.run(&vtkWriter);
 
     return EXIT_SUCCESS;
 }
