@@ -27,7 +27,6 @@ public:
 private:
     const Settings& m_settings;
     const KernelFunction* m_kernel;
-    double time;
 
     Grid grid;
     std::vector<std::shared_ptr<Particle>> particles;

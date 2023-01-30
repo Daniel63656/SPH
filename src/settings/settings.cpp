@@ -74,8 +74,6 @@ void Settings::loadFromFile(const std::string& filename)
             else if (paramName == "nCellsY")
                 nCells[1] = atoi(paramValue.c_str());
 
-            else if (paramName == "startTime")
-                startTime = atof(paramValue.c_str());
             else if (paramName == "endTime")
                 endTime = atof(paramValue.c_str());
             else if (paramName == "dt")
@@ -103,6 +101,6 @@ void Settings::printSettings() {
               << "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << numberOfParticles << std::endl
               << "physicalSize: " << physicalSize[0] << " x " << physicalSize[1] << std::endl
               << "cells: " << nCells[0] << " x " << nCells[1] << std::endl
-              << "time: (" << startTime << ", " << endTime << ") in " << dt << " steps\n"
+              << "time: " << endTime << " in " << dt << " steps\n"
               << "g: (" << g[0] << "," << g[1] << "), kernel: " << kernelFunction << "(" << smoothness << ")\n";
 }

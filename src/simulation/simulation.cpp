@@ -5,7 +5,6 @@
 Simulation::Simulation(const Settings &settings, const KernelFunction* kernel) :
         m_kernel{kernel},
         m_settings{settings},
-        time{settings.startTime},
         grid{settings}
 {
     initializeParticles();
@@ -32,6 +31,7 @@ void Simulation::initializeParticles()
 
 void Simulation::run(VtkWriter *vtkWriter)
 {
+    double time = 0;
     while (time < m_settings.endTime) {
         calculateDensityAndPressure();
         calculateForces();
@@ -93,13 +93,10 @@ void Simulation::updateParticles() {
         p_i->position += m_settings.dt*p_i->velocity;
     }
 
-    //resort Particles into grid datastructure based on updated positions
+    //resort Particles into grid datastructures based on updated positions
     grid.clear();
     for (const std::shared_ptr<Particle>& p : particles)
     {
         grid.add(p);
     }
-
-
-    //calculate velocity field???
 }
