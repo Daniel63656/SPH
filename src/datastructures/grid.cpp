@@ -25,7 +25,7 @@ void Grid::clear()
 }
 
 
-void Grid::add(const std::shared_ptr<Particle>& p)
+void Grid::add(Particle* p)
 {
     int idx = pos2idx(discretizedPosition(p->position));
     grid[idx].push_back(p);

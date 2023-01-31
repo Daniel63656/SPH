@@ -29,7 +29,7 @@ private:
     const KernelFunction* m_kernel;
 
     Grid grid;
-    std::vector<std::shared_ptr<Particle>> particles;
+    std::vector<Particle> particles;
 
     void calculateDensityAndPressure();
     void calculateForces();

@@ -1,0 +1,8 @@
+{
+    "name": "sph",
+    "version": "0.0.1",
+    "dependencies": [
+        "fmt",
+        "vtk"
+    ]
+}

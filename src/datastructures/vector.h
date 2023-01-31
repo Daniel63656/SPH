@@ -8,7 +8,6 @@
 template <unsigned int N> class Vector;
 template <unsigned int N> std::ostream& operator<< (std::ostream&, const Vector<N>&);
 
-
 template <unsigned int N>
 class Vector {
 public:
@@ -75,6 +74,7 @@ private:
     std::array<double, N> data = {};
 };
 
+typedef Vector<2> Vec2;
 
 //! symmetric mathematical operators (outside class definition to make it a non member function)
 template<unsigned int N>

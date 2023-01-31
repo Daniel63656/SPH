@@ -1,7 +1,6 @@
 #include "gaussian.h"
 #include <cmath>
 
-
 //! Gaussian function with effective radius of 3*smoothing
 Gaussian::Gaussian(double smoothing) : KernelFunction(smoothing)
 {

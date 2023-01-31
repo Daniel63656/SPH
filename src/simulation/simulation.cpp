@@ -12,19 +12,21 @@ Simulation::Simulation(const Settings &settings, const KernelFunction* kernel) :
 
 void Simulation::initializeParticles()
 {
-    std::array<int, 2> nParticles = {};
-    double area = m_settings.physicalSize[0]*m_settings.physicalSize[1];
-    nParticles[0] = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles/area));
-    nParticles[1] = m_settings.numberOfParticles/nParticles[0];
+    //std::array<int, 2> nParticles = {};
+    size_t domainSizeX = 0, domainSizeY = 0;
 
-    std::array<double, 2> spacing{m_settings.physicalSize[0]/nParticles[0], m_settings.physicalSize[1]/nParticles[1]};
-    for (int y = 0; y < nParticles[1]; y++)
+    double area = m_settings.physicalSize[0]*m_settings.physicalSize[1];
+    domainSizeX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles/area));
+    domainSizeY = m_settings.numberOfParticles/ domainSizeX;
+
+    std::array<double, 2> spacing{m_settings.physicalSize[0]/ domainSizeX, m_settings.physicalSize[1]/ domainSizeY };
+
+    for (int y = 0; y < domainSizeY; y++)
     {
-        for (int x = 0; x < nParticles[0]; x++)
+        for (int x = 0; x < domainSizeX; x++)
         {
-            std::shared_ptr<Particle> p = std::make_shared<Particle>(m_settings.mass, Vector<2>{x*spacing[0], y*spacing[1]}, Vector<2>{0, 0});
-            particles.push_back(p);
-            grid.add(p);
+            particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
+            grid.add(&particles.back());
         }
     }
 }
