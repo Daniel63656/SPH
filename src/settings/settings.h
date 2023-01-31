@@ -26,6 +26,7 @@ struct Settings
     // time
     double endTime = 10;
     double dt = 0.1;
+    double vs_dt = 1;
 
     //miscellaneous
     Vector<2> g;                          //< external forces

@@ -68,6 +68,15 @@ public:
     //! for printing on console. Implemented as friend so one can access private data outside class definition
     friend std::ostream& operator<< <N>(std::ostream&, const Vector&);
 
+    std::string serialize(const int n = 5) const
+    {
+        std::ostringstream out;
+        out.precision(n);
+        out << std::scientific << data[0] << " " << data[1];
+        return out.str();
+    }
+
+
 private:
     std::array<double, N> data = {};
 };

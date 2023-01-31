@@ -11,8 +11,8 @@ struct Particle
              {}
 
     double mass;
-    double rho{};
-    double pressure{};
+    double rho = 0;
+    double pressure = 0;
     Vector<2> position;
     Vector<2> velocity;
 

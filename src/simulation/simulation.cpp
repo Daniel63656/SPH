@@ -31,20 +31,23 @@ void Simulation::initializeParticles()
     }
 }
 
-void Simulation::run()
+void Simulation::run(OutputWriter& writer)
 {
     double time = 0;
+    double next_write = m_settings.vs_dt;
     while (time < m_settings.endTime) {
         calculateDensityAndPressure();
         calculateForces();
         updateParticles();
 
+        if (time >= next_write){
+            writer.write_vtp(particles);
+
+            next_write += m_settings.vs_dt;
+        }
+
         time += m_settings.dt;
         std::cout << "timestep t=" << time << "\n";
-
-        //if (vtkWriter != nullptr) {
-        //    vtkWriter->writeFile(time);
-        //}
     }
 }
 
