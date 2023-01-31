@@ -6,7 +6,8 @@
 #include "../kernelFunctions/kernelFunction.h"
 #include "../settings/settings.h"
 #include "../kernelFunctions/gaussian.h"
-#include "../output_writer/vtk_writer.h"
+#include "../output_writer/outputwriter.h"
+//#include "../output_writer/vtk_writer.h"
 
 
 class Simulation
@@ -19,7 +20,7 @@ public:
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
-    void run(VtkWriter* vtkWriter = nullptr);
+    void run(OutputWriter& writer);
 
     Grid& getGrid();
 

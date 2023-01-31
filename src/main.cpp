@@ -3,7 +3,8 @@
 #include "settings/settings.h"
 #include "simulation/simulation.h"
 #include "kernelFunctions/gaussian.h"
-#include "output_writer/vtk_writer.h"
+//#include "output_writer/vtk_writer.h"
+#include "output_writer/outputwriter.h"
 
 
 int main(int argc, char *argv[])
@@ -25,10 +26,13 @@ int main(int argc, char *argv[])
 
     Gaussian kernel(settings.smoothness);
 
-    Simulation simulation(settings, &kernel);
-    VtkWriter vtkWriter(simulation.getGrid());
+    OutputWriter writer;
 
-    simulation.run(&vtkWriter);
+
+    Simulation simulation(settings, &kernel);
+//    VtkWriter vtkWriter(simulation.getGrid());
+
+    simulation.run(&writer);
 
     return EXIT_SUCCESS;
 }

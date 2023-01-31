@@ -1,4 +1,5 @@
 #include "grid.h"
+#include "particle.h"
 
 Grid::Grid(const Settings& settings) : m_settings(settings)
 {
@@ -32,15 +33,15 @@ void Grid::add(Particle* p)
 }
 
 
-std::vector<std::shared_ptr<Particle>> Grid::neighbours(std::shared_ptr<Particle> center, double radius)
+std::vector<Particle*> Grid::neighbours(std::shared_ptr<Particle> center, double radius)
 {
-    std::vector<std::shared_ptr<Particle>> neighbours;
+    std::vector<Particle*> neighbours;
     //made x inner loop, so we traverse particle collection in the correct order
     for (int y = std::max(0, (int)(center->position[1]-radius)); y < std::min(m_settings.nCells[1], (int)(center->position[1]+radius)+1); y++)
     {
         for (int x = std::max(0, (int)(center->position[0]-radius)); x < std::min(m_settings.nCells[0], (int)(center->position[0]+radius)+1); x++)
         {
-            for (const std::shared_ptr<Particle>& p : grid[pos2idx({x, y})])
+            for (Particle* p : grid[pos2idx({x, y})])
             {
                 if (euclideanDistance(p->position, center->position) <= radius)
                 {
