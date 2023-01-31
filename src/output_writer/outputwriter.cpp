@@ -1,10 +1,11 @@
 #include "../datastructures/particle.h"
 #include "../output_writer/outputwriter.h"
+#include "body.h"
 #include <sstream>
 #include <string>
 #include <filesystem>
 
-OutputWriter::OutputWriter(double vs_dt, std::vector<Particle>& particles, std::string path): m_vs_dt(vs_dt),m_particles(particles), m_dir(path)
+OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt, std::vector<Particle>& particles, std::string path): m_mpi_info(mpi_info), m_vs_dt(vs_dt),m_particles(particles), m_dir(path)
 {
 	create_dirs();
 	build_tree();
@@ -43,8 +44,8 @@ void OutputWriter::build_tree()
 	vtkfile.append_attribute("header_type") = "UInt64";
 	pugi::xml_node polydata = vtkfile.append_child("PolyData");
 	pugi::xml_node piece = polydata.append_child("Piece");
-	//piece.append_attribute("NumberOfPoints") = m_mpi_info.arrayend - m_mpi_info.arraystart;
-	//piece.append_attribute("NumberOfVerts") = m_mpi_info.arrayend - m_mpi_info.arraystart;
+	piece.append_attribute("NumberOfPoints") = m_mpi_info.arrayend - m_mpi_info.arraystart;
+	piece.append_attribute("NumberOfVerts") = m_mpi_info.arrayend - m_mpi_info.arraystart;
 
 	// position
 	pugi::xml_node points = piece.append_child("Points");
@@ -103,15 +104,15 @@ void OutputWriter::build_tree()
 	m_verts.append_attribute("type") = "Int64";
 	m_verts.append_attribute("Name") = "offsets";
 
-	//std::string out = "\n";
-	//for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	//{
-	//	out += std::to_string(i + 1 - m_mpi_info.arraystart) + " ";
-	//}
-	//m_verts.text() = out.c_str();
+	std::string out = "\n";
+	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	{
+		out += std::to_string(i + 1 - m_mpi_info.arraystart) + " ";
+	}
+	m_verts.text() = out.c_str();
 
-	// connectivity
-	//m_conn = verts.append_child("DataArray");
+	//connectivity
+	m_conn = verts.append_child("DataArray");
  //	m_conn.append_attribute("type") = "Int64";
 	//m_conn.append_attribute("Name") = "connectivity";
 

@@ -1,13 +1,14 @@
 #pragma once
 
 #include "../datastructures/particle.h"
+#include "../output_writer/body.h"
 #include <vector>
 #include <pugixml.hpp>
 
 class OutputWriter
 {
 public:
-	OutputWriter(double vs_dt, std::vector<Particle>& particles, std::string path);
+	OutputWriter(MPI_Vars mpi_info, double vs_dt, std::vector<Particle>& particles, std::string path);
 
 	void write_vtp();
 
@@ -35,6 +36,8 @@ private:
 	int m_step;
 	double m_vs_dt;
 	double m_endtime;
+
+    MPI_Vars m_mpi_info;
 	std::vector<Particle>& m_particles;
 	std::string m_dir;
 	std::string m_path;
