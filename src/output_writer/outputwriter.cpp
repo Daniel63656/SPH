@@ -1,14 +1,15 @@
-#include "datastructures/particle.h"
-#include "outputwriter/outputwriter.h"
+#include "../datastructures/particle.h"
+#include "../output_writer/outputwriter.h"
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 OutputWriter::OutputWriter(double vs_dt, std::vector<Particle>& particles, std::string path): m_vs_dt(vs_dt),m_particles(particles), m_dir(path)
 {
 	create_dirs();
 	build_tree();
     m_step = 0;
-    m_path = m_dir+std::string("time_series/")+std::to_string(m_mpi_info.rank)+std::string("/sim_");
+    m_path = m_dir+std::string("time_series/")+std::string("/sim_");
 }
 
 void OutputWriter::create_dirs()
@@ -20,15 +21,16 @@ void OutputWriter::create_dirs()
 	if (!created_dir)
 	{
 		std::cout << "Could not create directories!" << std::endl;
+		bool created_subdirs = std::filesystem::create_directories(m_dir + "/time_series/");
 	}
-	for (int i = 0; i < m_mpi_info.processNo; i++)
-	{
-		bool created_subdirs = std::filesystem::create_directories(m_dir + "/time_series/" + std::to_string(i));
-		if (created_subdirs)
-		{
-			std::cout << "Could not create subdirectory! " << i << std::endl;
-		}
-	}
+	//for (int i = 0; i < m_mpi_info.processNo; i++)
+	//{
+	//	bool created_subdirs = std::filesystem::create_directories(m_dir + "/time_series/" + std::to_string(i));
+	//	if (created_subdirs)
+	//	{
+	//		std::cout << "Could not create subdirectory! " << i << std::endl;
+	//	}
+	//}
 }
 
 void OutputWriter::build_tree()
@@ -41,8 +43,8 @@ void OutputWriter::build_tree()
 	vtkfile.append_attribute("header_type") = "UInt64";
 	pugi::xml_node polydata = vtkfile.append_child("PolyData");
 	pugi::xml_node piece = polydata.append_child("Piece");
-	piece.append_attribute("NumberOfPoints") = m_mpi_info.arrayend - m_mpi_info.arraystart;
-	piece.append_attribute("NumberOfVerts") = m_mpi_info.arrayend - m_mpi_info.arraystart;
+	//piece.append_attribute("NumberOfPoints") = m_mpi_info.arrayend - m_mpi_info.arraystart;
+	//piece.append_attribute("NumberOfVerts") = m_mpi_info.arrayend - m_mpi_info.arraystart;
 
 	// position
 	pugi::xml_node points = piece.append_child("Points");
@@ -101,24 +103,24 @@ void OutputWriter::build_tree()
 	m_verts.append_attribute("type") = "Int64";
 	m_verts.append_attribute("Name") = "offsets";
 
-	std::string out = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	{
-		out += std::to_string(i + 1 - m_mpi_info.arraystart) + " ";
-	}
-	m_verts.text() = out.c_str();
+	//std::string out = "\n";
+	//for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	//{
+	//	out += std::to_string(i + 1 - m_mpi_info.arraystart) + " ";
+	//}
+	//m_verts.text() = out.c_str();
 
 	// connectivity
-	m_conn = verts.append_child("DataArray");
- 	m_conn.append_attribute("type") = "Int64";
-	m_conn.append_attribute("Name") = "connectivity";
+	//m_conn = verts.append_child("DataArray");
+ //	m_conn.append_attribute("type") = "Int64";
+	//m_conn.append_attribute("Name") = "connectivity";
 
-	out = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	{
-		out += std::to_string(i - m_mpi_info.arraystart) + " ";
-	}
-	m_conn.text() = out.c_str();
+	//out = "\n";
+	//for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	//{
+	//	out += std::to_string(i - m_mpi_info.arraystart) + " ";
+	//}
+	//m_conn.text() = out.c_str();
 
 
 /*
@@ -158,7 +160,7 @@ void OutputWriter::write_vtp()
 	std::string phi = "\n";
 	std::string omega = "\n";
 	std::string alpha = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	/*for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
 	{
 		Particle& body = m_mol_arr[i];
 		pos   += body.position.serialize().c_str();
@@ -173,7 +175,7 @@ void OutputWriter::write_vtp()
 		phi += "\n";
 		omega += "\n";
 		alpha += "\n";
-	}
+	}*/
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
 	m_acceleration.text() = acc.c_str();
@@ -187,10 +189,10 @@ void OutputWriter::write_vtp()
 	//m_pot_e.text() = m_glob.pot_e;
 	//m_total_e.text() = m_glob.total;
 
-	std::ofstream outFile;
-	outFile.open(m_path + std::to_string(m_step)+std::string(".vtp"));
-	m_doc.save(outFile);
-	outFile.close();
+	//std::ofstream outFile;
+	//outFile.open(m_path + std::to_string(m_step)+std::string(".vtp"));
+	//m_doc.save(outFile);
+	//outFile.close();
 
 	m_step++;
 }
@@ -220,21 +222,21 @@ void OutputWriter::write_pvd(std::string filename)
 	for (int i = 0; i < m_step; i ++)
 	{
 		time += m_vs_dt;
-		for (int j = 0; j < m_mpi_info.processNo; j++)
-		{
-			dataset = collection.append_child("DataSet");
-			dataset.append_attribute("timestep") = scientific(time).c_str();
-			dataset.append_attribute("group") = "";
-			dataset.append_attribute("part") = j;
-			std::string out = "time_series/" + std::to_string(j) + "/sim_" + std::to_string(i) + ".vtp";
-			dataset.append_attribute("file") = out.c_str();
-		}
+		//for (int j = 0; j < m_mpi_info.processNo; j++)
+		//{
+		//	dataset = collection.append_child("DataSet");
+		//	dataset.append_attribute("timestep") = scientific(time).c_str();
+		//	dataset.append_attribute("group") = "";
+		//	dataset.append_attribute("part") = j;
+		//	std::string out = "time_series/" + std::to_string(j) + "/sim_" + std::to_string(i) + ".vtp";
+		//	dataset.append_attribute("file") = out.c_str();
+		//}
 	}
 
-	std::ofstream outFile;
-	outFile.open(m_dir+filename);
-	doc.save(outFile);
-	outFile.close();
+	//std::ofstream outFile;
+	//outFile.open(m_dir+filename);
+	//doc.save(outFile);
+	//outFile.close();
 }
 
 

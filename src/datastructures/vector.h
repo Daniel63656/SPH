@@ -1,8 +1,6 @@
 #pragma once
 
-#include <array>
-#include <cmath>
-#include <iostream>
+#include "../pch.h"
 
 //! vector class to do basic vector operations and hold N entries
 template <unsigned int N> class Vector;

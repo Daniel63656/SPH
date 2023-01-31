@@ -26,13 +26,13 @@ int main(int argc, char *argv[])
 
     Gaussian kernel(settings.smoothness);
 
-    OutputWriter writer;
+    //OutputWriter writer;
 
 
     Simulation simulation(settings, &kernel);
 //    VtkWriter vtkWriter(simulation.getGrid());
 
-    simulation.run(&writer);
+    simulation.run();
 
     return EXIT_SUCCESS;
 }

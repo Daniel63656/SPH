@@ -31,7 +31,7 @@ void Simulation::initializeParticles()
     }
 }
 
-void Simulation::run(VtkWriter *vtkWriter)
+void Simulation::run()
 {
     double time = 0;
     while (time < m_settings.endTime) {
@@ -42,9 +42,9 @@ void Simulation::run(VtkWriter *vtkWriter)
         time += m_settings.dt;
         std::cout << "timestep t=" << time << "\n";
 
-        if (vtkWriter != nullptr) {
-            vtkWriter->writeFile(time);
-        }
+        //if (vtkWriter != nullptr) {
+        //    vtkWriter->writeFile(time);
+        //}
     }
 }
 
@@ -55,50 +55,50 @@ Grid& Simulation::getGrid() {
 
 void Simulation::calculateDensityAndPressure() {
 
-    for (const std::shared_ptr<Particle>& p_i : particles)
+    for (Particle& p_i : particles)
     {
         double rho = 0;
         bool hasNeighbours = false;
-        for (const std::shared_ptr<Particle>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
+        for (const Particle* p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
             hasNeighbours = true;
-            rho += p_j->mass * m_kernel->W(p_i->position - p_j->position);
+            rho += p_j->mass * m_kernel->W(p_i.position - p_j->position);
         }
 
         assert(hasNeighbours);
-        p_i->rho = rho;
-        p_i->pressure = m_settings.kappa*(pow(rho/m_settings.rho_0, 7) - 1);
+        p_i.rho = rho;
+        p_i.pressure = m_settings.kappa*(pow(rho/m_settings.rho_0, 7) - 1);
     }
 }
 
 
 void Simulation::calculateForces() {
-    for (const std::shared_ptr<Particle>& p_i : particles)
+    for (Particle& p_i : particles)
     {
-        p_i->forces = p_i->rho*m_settings.g;
-        for (const std::shared_ptr<Particle>& p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
+        p_i.forces = p_i.rho*m_settings.g;
+        for (Particle* p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
         {
-            double vol_i = p_i->mass/p_i->rho;
+            double vol_i = p_i.mass/p_i.rho;
             double vol_j = p_j->mass/p_j->rho;
 
-            p_i->forces += (p_i->pressure*vol_i + p_j->pressure*vol_j) / 2 * m_kernel->gradW(p_i->position - p_j->position)
-                         + (p_i->velocity*vol_i - p_j->velocity*vol_j) / 2 * m_kernel->laplaceW(p_i->position - p_j->position);
+            p_i.forces += (p_i.pressure*vol_i + p_j->pressure*vol_j) / 2 * m_kernel->gradW(p_i.position - p_j->position)
+                         + (p_i.velocity*vol_i - p_j->velocity*vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j->position);
         }
     }
 }
 
 
 void Simulation::updateParticles() {
-    for (const std::shared_ptr<Particle>& p_i : particles)
+    for (Particle& p_i : particles)
     {
-        p_i->velocity += m_settings.dt/p_i->rho * p_i->forces;
-        p_i->position += m_settings.dt*p_i->velocity;
+        p_i.velocity += m_settings.dt/p_i.rho * p_i.forces;
+        p_i.position += m_settings.dt*p_i.velocity;
     }
 
     //resort Particles into grid datastructures based on updated positions
     grid.clear();
-    for (const std::shared_ptr<Particle>& p : particles)
+    for (Particle& p : particles)
     {
-        grid.add(p);
+        grid.add(&p);
     }
 }

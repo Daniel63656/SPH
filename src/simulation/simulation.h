@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <memory>
+#include "../pch.h"
 #include "../datastructures/grid.h"
 #include "../kernelFunctions/kernelFunction.h"
 #include "../settings/settings.h"
@@ -20,7 +19,7 @@ public:
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
-    void run(OutputWriter& writer);
+    void run();
 
     Grid& getGrid();
 

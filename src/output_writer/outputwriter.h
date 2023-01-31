@@ -2,7 +2,7 @@
 
 #include "../datastructures/particle.h"
 #include <vector>
-#include <pugi::xml>
+#include <pugixml.hpp>
 
 class OutputWriter
 {

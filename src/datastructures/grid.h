@@ -15,7 +15,7 @@ public:
     void clear();
     void add(Particle* p);
 
-    std::vector<Particle*> neighbours(std::shared_ptr<Particle> center, double radius);
+    std::vector<Particle*> neighbours(const Particle& center, double radius);
 
 private:
     const Settings& m_settings;
