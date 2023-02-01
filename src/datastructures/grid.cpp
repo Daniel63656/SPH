@@ -1,5 +1,6 @@
 #include "grid.h"
 #include "particle.h"
+#include "neighbourhood.h"
 
 Grid::Grid(const Settings& settings) : m_settings(settings)
 {
@@ -30,6 +31,11 @@ void Grid::add(Particle* p)
 {
 	int idx = pos2idx(discretizedPosition(p->position));
 	grid[idx].push_back(p);
+}
+
+Neighbourhood Grid::neighbours(const Vec2& center, double radius)
+{
+	return Neighbourhood(this, center, radius);
 }
 
 

@@ -1,6 +1,6 @@
 #include <cassert>
 #include "simulation.h"
-
+#include "datastructures/neighbourhood.h"
 
 Simulation::Simulation(const Settings& settings, const KernelFunction* kernel) :
 	m_kernel{ kernel },
