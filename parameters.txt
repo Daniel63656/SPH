@@ -11,8 +11,8 @@ numberOfParticles = 100         # number of particles used in the simulation
 # domain
 physicalSizeX = 2.0             # physical size of the domain
 physicalSizeY = 2.0
-nCellsX = 100                   # number of cells in all spacial directions
-nCellsY = 100
+nCellsX = 5                   # number of cells in all spacial directions
+nCellsY = 5
 
 # time
 endTime = 10.0

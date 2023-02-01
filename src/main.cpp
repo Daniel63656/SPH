@@ -7,32 +7,32 @@
 #include "output_writer/outputwriter.h"
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    // try to read simulation parameters
-    if (argc == 1)
-    {
-        std::cout << "usage: " << argv[0] << " <filename>" << std::endl;
-        return EXIT_FAILURE;
-    }
-    // read in the first argument
-    std::string filename = argv[1];
-    std::cout << "Parameters imported from: \"" << filename << "\"" << std::endl;
 
-    // instantiate settings object
-    Settings settings;
-    settings.loadFromFile(filename);
-    settings.printSettings();
+	// try to read simulation parameters
+	if (argc == 1)
+	{
+		std::cout << "usage: " << argv[0] << " <filename>" << std::endl;
+		return EXIT_FAILURE;
+	}
 
-    Gaussian kernel(settings.smoothness);
+	// read in the first argument
+	std::string filename = argv[1];
+	std::cout << "Parameters imported from: \"" << filename << "\"" << std::endl;
 
-    //OutputWriter writer;
+	// instantiate settings object
+	Settings settings;
+	settings.loadFromFile(filename);
+	settings.printSettings();
 
+	Gaussian kernel(settings.smoothness);
 
-    Simulation simulation(settings, &kernel);
-//    VtkWriter vtkWriter(simulation.getGrid());
+	// OutputWriter writer;
+	Simulation simulation(settings, &kernel);
+	// VtkWriter vtkWriter(simulation.getGrid());
 
-    simulation.run();
+	simulation.run();
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

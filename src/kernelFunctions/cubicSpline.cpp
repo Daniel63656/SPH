@@ -9,7 +9,7 @@ CubicSpline::CubicSpline(double smoothing) : KernelFunction(smoothing)
 }
 
 
-double CubicSpline::W(Vector<2> difference) const {
+double CubicSpline::W(Vec2 difference) const {
     double R = difference.magnitude()/h;
     if (R <= 1) {
         return alpha * 2.0f/3 - R*R + pow(R, 3)/2;
@@ -21,9 +21,9 @@ double CubicSpline::W(Vector<2> difference) const {
 }
 
 
-Vector<2> CubicSpline::gradW(Vector<2> difference) const {
+Vec2 CubicSpline::gradW(Vec2 difference) const {
     double R = difference.magnitude() / h;
-    Vector<2> res = Vector<2>();
+    Vec2 res = Vec2();
     if (R <= 1) {
         double factor = -2/(h*h) + 3*R/(2*h*h);
         for (int i = 0; i < 2; i++)
@@ -47,7 +47,7 @@ Vector<2> CubicSpline::gradW(Vector<2> difference) const {
 }
 
 
-double CubicSpline::laplaceW(Vector<2> difference) const {
+double CubicSpline::laplaceW(Vec2 difference) const {
     double R = difference.magnitude()/h;
     double res = 0;
     if (R <= 1) {

@@ -4,7 +4,7 @@
 
 struct Particle
 {
-    Particle(double mass, const Vector<2> &position, const Vector<2> &velocity) :
+    Particle(double mass, const Vec2 &position, const Vec2 &velocity) :
              mass(mass),
              position(position),
              velocity(velocity)
@@ -13,8 +13,8 @@ struct Particle
     double mass;
     double rho{};
     double pressure{};
-    Vector<2> position;
-    Vector<2> velocity;
+    Vec2 position;
+    Vec2 velocity;
 
-    Vector<2> forces;       //vector to store calculated forces in each time run
+    Vec2 forces;       //vector to store calculated forces in each time run
 };

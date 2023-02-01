@@ -28,7 +28,7 @@ struct Settings
     double dt = 0.1;
 
     //miscellaneous
-    Vector<2> g;                          //< external forces
+    Vec2 g;                          //< external forces
     std::string kernelFunction = "GAUSSIAN";
     double smoothness;
 

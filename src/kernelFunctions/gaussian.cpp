@@ -9,7 +9,7 @@ Gaussian::Gaussian(double smoothing) : KernelFunction(smoothing)
     //3d    alpha = 1/(sqrt(pow(M_PI, 3))*pow(h, 3));
 }
 
-double Gaussian::W(Vector<2> difference) const {
+double Gaussian::W(Vec2 difference) const {
     double R = difference.magnitude()/h;
     if (R <= 3)
     {
@@ -19,9 +19,9 @@ double Gaussian::W(Vector<2> difference) const {
 }
 
 
-Vector<2> Gaussian::gradW(Vector<2> difference) const {
+Vec2 Gaussian::gradW(Vec2 difference) const {
     double R = difference.magnitude()/h;
-    Vector<2> res = Vector<2>();
+    Vec2 res = Vec2();
     if (R <= 3) {
         double factor = -2 / (h*h) * exp(-R * R);
         for (int i = 0; i < 2; i++)
@@ -37,7 +37,7 @@ Vector<2> Gaussian::gradW(Vector<2> difference) const {
 }
 
 
-double Gaussian::laplaceW(Vector<2> difference) const {
+double Gaussian::laplaceW(Vec2 difference) const {
     double R = difference.magnitude()/h;
     if (R <= 3) {
         double res = 0;

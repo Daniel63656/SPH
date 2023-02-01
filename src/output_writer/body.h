@@ -2,9 +2,6 @@
 
 #include "../pch.h"
 #include <cmath>
-#include <sys/resource.h>
-
-
 
 struct MPI_Vars
 {

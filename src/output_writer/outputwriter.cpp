@@ -5,12 +5,12 @@
 #include <string>
 #include <filesystem>
 
-OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt, std::vector<Particle>& particles, std::string path): m_mpi_info(mpi_info), m_vs_dt(vs_dt),m_particles(particles), m_dir(path)
+OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt, std::vector<Particle>& particles, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_particles(particles), m_dir(path)
 {
 	create_dirs();
 	build_tree();
-    m_step = 0;
-    m_path = m_dir+std::string("time_series/")+std::string("/sim_");
+	m_step = 0;
+	m_path = m_dir + std::string("time_series/") + std::string("/sim_");
 }
 
 void OutputWriter::create_dirs()
@@ -81,7 +81,7 @@ void OutputWriter::build_tree()
 	m_phi.append_attribute("NumberOfComponents") = "3";
 	m_phi.append_attribute("format") = "ascii";
 
-	
+
 	// omega
 	m_omega = pointdata.append_child("DataArray");
 	m_omega.append_attribute("type") = "Float64";
@@ -89,7 +89,7 @@ void OutputWriter::build_tree()
 	m_omega.append_attribute("NumberOfComponents") = "3";
 	m_omega.append_attribute("format") = "ascii";
 
-	
+
 	// alpha
 	m_alpha = pointdata.append_child("DataArray");
 	m_alpha.append_attribute("type") = "Float64";
@@ -113,42 +113,42 @@ void OutputWriter::build_tree()
 
 	//connectivity
 	m_conn = verts.append_child("DataArray");
- //	m_conn.append_attribute("type") = "Int64";
-	//m_conn.append_attribute("Name") = "connectivity";
+	//	m_conn.append_attribute("type") = "Int64";
+	   //m_conn.append_attribute("Name") = "connectivity";
 
-	//out = "\n";
-	//for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	//{
-	//	out += std::to_string(i - m_mpi_info.arraystart) + " ";
-	//}
-	//m_conn.text() = out.c_str();
+	   //out = "\n";
+	   //for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	   //{
+	   //	out += std::to_string(i - m_mpi_info.arraystart) + " ";
+	   //}
+	   //m_conn.text() = out.c_str();
 
 
-/*
-	pugi::xml_node fielddata = polydata.append_child("FieldData");
-	m_kin_e = fielddata.append_child("DataArray");
-	m_kin_e.append_attribute("type") = "Float64";
-	m_kin_e.append_attribute("Name") = "kinetic energy";
-	m_kin_e.append_attribute("NumberOfTuples") = "1";
-	m_kin_e.append_attribute("format") = "ascii";
+   /*
+	   pugi::xml_node fielddata = polydata.append_child("FieldData");
+	   m_kin_e = fielddata.append_child("DataArray");
+	   m_kin_e.append_attribute("type") = "Float64";
+	   m_kin_e.append_attribute("Name") = "kinetic energy";
+	   m_kin_e.append_attribute("NumberOfTuples") = "1";
+	   m_kin_e.append_attribute("format") = "ascii";
 
-	m_rot_e = fielddata.append_child("DataArray");
-	m_rot_e.append_attribute("type") = "Float64";
-	m_rot_e.append_attribute("Name") = "rotational energy";
-	m_rot_e.append_attribute("NumberOfTuples") = "1";
-	m_rot_e.append_attribute("format") = "ascii";
+	   m_rot_e = fielddata.append_child("DataArray");
+	   m_rot_e.append_attribute("type") = "Float64";
+	   m_rot_e.append_attribute("Name") = "rotational energy";
+	   m_rot_e.append_attribute("NumberOfTuples") = "1";
+	   m_rot_e.append_attribute("format") = "ascii";
 
-	m_pot_e = fielddata.append_child("DataArray");
-	m_pot_e.append_attribute("type") = "Float64";
-	m_pot_e.append_attribute("Name") = "potential energy";
-	m_pot_e.append_attribute("NumberOfTuples") = "1";
-	m_pot_e.append_attribute("format") = "ascii";
+	   m_pot_e = fielddata.append_child("DataArray");
+	   m_pot_e.append_attribute("type") = "Float64";
+	   m_pot_e.append_attribute("Name") = "potential energy";
+	   m_pot_e.append_attribute("NumberOfTuples") = "1";
+	   m_pot_e.append_attribute("format") = "ascii";
 
-	m_total_e = fielddata.append_child("DataArray");
-	m_total_e.append_attribute("type") = "Float64";
-	m_total_e.append_attribute("Name") = "total energy";
-	m_total_e.append_attribute("NumberOfTuples") = "1";
-	m_total_e.append_attribute("format") = "ascii";*/
+	   m_total_e = fielddata.append_child("DataArray");
+	   m_total_e.append_attribute("type") = "Float64";
+	   m_total_e.append_attribute("Name") = "total energy";
+	   m_total_e.append_attribute("NumberOfTuples") = "1";
+	   m_total_e.append_attribute("format") = "ascii";*/
 }
 
 
@@ -218,9 +218,9 @@ void OutputWriter::write_pvd(std::string filename)
 
 	pugi::xml_node collection = vtkfile.append_child("Collection");
 	pugi::xml_node dataset;
-	
+
 	double time = 0;
-	for (int i = 0; i < m_step; i ++)
+	for (int i = 0; i < m_step; i++)
 	{
 		time += m_vs_dt;
 		//for (int j = 0; j < m_mpi_info.processNo; j++)
