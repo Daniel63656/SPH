@@ -13,28 +13,28 @@ Simulation::Simulation(const Settings& settings, const KernelFunction* kernel) :
 void Simulation::initializeParticles()
 {
 	////std::array<int, 2> nParticles = {};
-	//size_t domainSizeX = 0, domainSizeY = 0;
+	size_t domainSizeX = 0, domainSizeY = 0;
 
-	//double area = m_settings.physicalSize[0] * m_settings.physicalSize[1];
-	//domainSizeX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles / area));
-	//domainSizeY = m_settings.numberOfParticles / domainSizeX;
+	double area = m_settings.physicalSize[0] * m_settings.physicalSize[1];
+	domainSizeX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles / area));
+	domainSizeY = m_settings.numberOfParticles / domainSizeX;
 
-	//std::array<double, 2> spacing{ m_settings.physicalSize[0] / domainSizeX, m_settings.physicalSize[1] / domainSizeY };
+	std::array<double, 2> spacing{ m_settings.physicalSize[0] / domainSizeX, m_settings.physicalSize[1] / domainSizeY };
 
-	//for (int y = 0; y < domainSizeY; y++)
-	//{
-	//	for (int x = 0; x < domainSizeX; x++)
-	//	{
-	//		particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
-	//		grid.add(&particles.back());
-	//	}
-	//}
+    for (int y = 0; y < domainSizeY; y++)
+    {
+        for (int x = 0; x < domainSizeX; x++)
+        {
+            particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
+            grid.add(&particles.back());
+        }
+    }
 }
 
-void Simulation::run()
+void Simulation::run(OutputWriter& writer)
 {
 	// testing neighbourhood search / iterator
-	
+	/*
 	particles.emplace_back(m_settings.mass, Vec2{ 1.0, 0.0 }, Vec2{ 0, 0 });
 	particles.emplace_back(m_settings.mass, Vec2{ 2.0, 0.0 }, Vec2{ 0, 0 });
 	particles.emplace_back(m_settings.mass, Vec2{ 3.0, 0.0 }, Vec2{ 0, 0 });
@@ -50,20 +50,24 @@ void Simulation::run()
 	{
 		std::cout << "pos " << p.position[0] << ", " << p.position[1] << std::endl;
 	}
-	
-	//double time = 0;
-	//while (time < m_settings.endTime) {
-	//	calculateDensityAndPressure();
-	//	calculateForces();
-	//	updateParticles();
+	*/
 
-	//	time += m_settings.dt;
-	//	std::cout << "timestep t=" << time << "\n";
+    double time = 0;
+    double next_write = m_settings.vs_dt;
+    while (time < m_settings.endTime) {
+        calculateDensityAndPressure();
+        calculateForces();
+        updateParticles();
 
-	//	//if (vtkWriter != nullptr) {
-	//	//    vtkWriter->writeFile(time);
-	//	//}
-	//}
+        if (time >= next_write){
+            writer.write_vtp(particles);
+
+            next_write += m_settings.vs_dt;
+        }
+
+        time += m_settings.dt;
+        std::cout << "timestep t=" << time << "\n";
+    }
 }
 
 

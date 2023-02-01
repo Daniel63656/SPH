@@ -19,7 +19,7 @@ public:
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
-    void run();
+    void run(OutputWriter& writer);
 
     Grid& getGrid();
 

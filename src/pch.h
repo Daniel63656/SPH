@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <memory>
+#include <sstream>
 // mpi
 //#include "mpi.h"
 

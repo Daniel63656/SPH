@@ -5,7 +5,7 @@
 #include <string>
 #include <filesystem>
 
-OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt, std::vector<Particle>& particles, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_particles(particles), m_dir(path)
+OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt,  std::string path): m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(path)
 {
 	create_dirs();
 	build_tree();
@@ -52,7 +52,7 @@ void OutputWriter::build_tree()
 	m_position = points.append_child("DataArray");
 	m_position.append_attribute("type") = "Float64";
 	m_position.append_attribute("Name") = "position";
-	m_position.append_attribute("NumberOfComponents") = "3";
+	m_position.append_attribute("NumberOfComponents") = "2";
 	m_position.append_attribute("format") = "ascii";
 
 
@@ -62,40 +62,40 @@ void OutputWriter::build_tree()
 	m_velocity = pointdata.append_child("DataArray");
 	m_velocity.append_attribute("type") = "Float64";
 	m_velocity.append_attribute("Name") = "velocity";
-	m_velocity.append_attribute("NumberOfComponents") = "3";
+	m_velocity.append_attribute("NumberOfComponents") = "2";
 	m_velocity.append_attribute("format") = "ascii";
 
 
 	// acceleration
-	m_acceleration = pointdata.append_child("DataArray");
-	m_acceleration.append_attribute("type") = "Float64";
-	m_acceleration.append_attribute("Name") = "acceleration";
-	m_acceleration.append_attribute("NumberOfComponents") = "3";
-	m_acceleration.append_attribute("format") = "ascii";
+	m_forces = pointdata.append_child("DataArray");
+	m_forces.append_attribute("type") = "Float64";
+	m_forces.append_attribute("Name") = "force";
+	m_forces.append_attribute("NumberOfComponents") = "2";
+	m_forces.append_attribute("format") = "ascii";
 
 
 	// angle
-	m_phi = pointdata.append_child("DataArray");
-	m_phi.append_attribute("type") = "Float64";
-	m_phi.append_attribute("Name") = "phi";
-	m_phi.append_attribute("NumberOfComponents") = "3";
-	m_phi.append_attribute("format") = "ascii";
+	m_mass = pointdata.append_child("DataArray");
+	m_mass.append_attribute("type") = "Float64";
+	m_mass.append_attribute("Name") = "mass";
+	m_mass.append_attribute("NumberOfComponents") = "1";
+	m_mass.append_attribute("format") = "ascii";
 
 
 	// omega
-	m_omega = pointdata.append_child("DataArray");
-	m_omega.append_attribute("type") = "Float64";
-	m_omega.append_attribute("Name") = "omega";
-	m_omega.append_attribute("NumberOfComponents") = "3";
-	m_omega.append_attribute("format") = "ascii";
+	m_rho = pointdata.append_child("DataArray");
+	m_rho.append_attribute("type") = "Float64";
+	m_rho.append_attribute("Name") = "rho";
+	m_rho.append_attribute("NumberOfComponents") = "1";
+	m_rho.append_attribute("format") = "ascii";
 
 
 	// alpha
-	m_alpha = pointdata.append_child("DataArray");
-	m_alpha.append_attribute("type") = "Float64";
-	m_alpha.append_attribute("Name") = "alpha";
-	m_alpha.append_attribute("NumberOfComponents") = "3";
-	m_alpha.append_attribute("format") = "ascii";
+	m_pressure = pointdata.append_child("DataArray");
+	m_pressure.append_attribute("type") = "Float64";
+	m_pressure.append_attribute("Name") = "pressure";
+	m_pressure.append_attribute("NumberOfComponents") = "1";
+	m_pressure.append_attribute("format") = "ascii";
 
 
 	//
@@ -113,76 +113,49 @@ void OutputWriter::build_tree()
 
 	//connectivity
 	m_conn = verts.append_child("DataArray");
-	//	m_conn.append_attribute("type") = "Int64";
-	   //m_conn.append_attribute("Name") = "connectivity";
+    m_conn.append_attribute("type") = "Int64";
+	m_conn.append_attribute("Name") = "connectivity";
 
-	   //out = "\n";
-	   //for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	   //{
-	   //	out += std::to_string(i - m_mpi_info.arraystart) + " ";
-	   //}
-	   //m_conn.text() = out.c_str();
-
-
-   /*
-	   pugi::xml_node fielddata = polydata.append_child("FieldData");
-	   m_kin_e = fielddata.append_child("DataArray");
-	   m_kin_e.append_attribute("type") = "Float64";
-	   m_kin_e.append_attribute("Name") = "kinetic energy";
-	   m_kin_e.append_attribute("NumberOfTuples") = "1";
-	   m_kin_e.append_attribute("format") = "ascii";
-
-	   m_rot_e = fielddata.append_child("DataArray");
-	   m_rot_e.append_attribute("type") = "Float64";
-	   m_rot_e.append_attribute("Name") = "rotational energy";
-	   m_rot_e.append_attribute("NumberOfTuples") = "1";
-	   m_rot_e.append_attribute("format") = "ascii";
-
-	   m_pot_e = fielddata.append_child("DataArray");
-	   m_pot_e.append_attribute("type") = "Float64";
-	   m_pot_e.append_attribute("Name") = "potential energy";
-	   m_pot_e.append_attribute("NumberOfTuples") = "1";
-	   m_pot_e.append_attribute("format") = "ascii";
-
-	   m_total_e = fielddata.append_child("DataArray");
-	   m_total_e.append_attribute("type") = "Float64";
-	   m_total_e.append_attribute("Name") = "total energy";
-	   m_total_e.append_attribute("NumberOfTuples") = "1";
-	   m_total_e.append_attribute("format") = "ascii";*/
+	out = "\n";
+	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	{
+		out += std::to_string(i - m_mpi_info.arraystart) + " ";
+	}
+	m_conn.text() = out.c_str();
 }
 
 
-void OutputWriter::write_vtp()
+void OutputWriter::write_vtp(std::vector<Particle>& particles)
 {
 	// position
 	std::string pos = "\n";
 	std::string vel = "\n";
-	std::string acc = "\n";
-	std::string phi = "\n";
-	std::string omega = "\n";
-	std::string alpha = "\n";
-	/*for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+	std::string force = "\n";
+	std::string mass = "\n";
+	std::string rho = "\n";
+	std::string pressure = "\n";
+	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
 	{
-		Particle& body = m_mol_arr[i];
-		pos   += body.position.serialize().c_str();
-		vel   += body.velocity.serialize().c_str();
-		acc   += body.acceleration.serialize().c_str();
-		phi   += body.phi.serialize().c_str();
-		omega += body.omega.serialize().c_str();
-		alpha += body.alpha.serialize().c_str();
+		Particle& particle = particles[i];
+		pos   += particle.position.serialize().c_str();
+		vel   += particle.velocity.serialize().c_str();
+		force   += particle.forces.serialize().c_str();
+	    mass   += particle.mass;
+		rho += particle.rho;
+		pressure += particle.pressure;
 		pos += "\n";
 		vel += "\n";
-		acc += "\n";
-		phi += "\n";
-		omega += "\n";
-		alpha += "\n";
-	}*/
+		force += "\n";
+	    mass += "\n";
+		rho += "\n";
+		pressure += "\n";
+	}
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
-	m_acceleration.text() = acc.c_str();
-	m_phi.text() = phi.c_str();
-	m_omega.text() = omega.c_str();
-	m_alpha.text() = alpha.c_str();
+	m_forces.text() = force.c_str();
+	m_mass.text() = mass.c_str();
+	m_rho.text() = rho.c_str();
+	m_pressure.text() = pressure.c_str();
 
 
 	//m_kin_e.text() = m_glob.kin_e;
@@ -190,10 +163,10 @@ void OutputWriter::write_vtp()
 	//m_pot_e.text() = m_glob.pot_e;
 	//m_total_e.text() = m_glob.total;
 
-	//std::ofstream outFile;
-	//outFile.open(m_path + std::to_string(m_step)+std::string(".vtp"));
-	//m_doc.save(outFile);
-	//outFile.close();
+	std::ofstream outFile;
+	outFile.open(m_path + std::to_string(m_step)+std::string(".vtp"));
+	m_doc.save(outFile);
+	outFile.close();
 
 	m_step++;
 }
@@ -223,21 +196,21 @@ void OutputWriter::write_pvd(std::string filename)
 	for (int i = 0; i < m_step; i++)
 	{
 		time += m_vs_dt;
-		//for (int j = 0; j < m_mpi_info.processNo; j++)
-		//{
-		//	dataset = collection.append_child("DataSet");
-		//	dataset.append_attribute("timestep") = scientific(time).c_str();
-		//	dataset.append_attribute("group") = "";
-		//	dataset.append_attribute("part") = j;
-		//	std::string out = "time_series/" + std::to_string(j) + "/sim_" + std::to_string(i) + ".vtp";
-		//	dataset.append_attribute("file") = out.c_str();
-		//}
+		for (int j = 0; j < m_mpi_info.processNo; j++)
+		{
+			dataset = collection.append_child("DataSet");
+			dataset.append_attribute("timestep") = scientific(time).c_str();
+			dataset.append_attribute("group") = "";
+			dataset.append_attribute("part") = j;
+			std::string out = "time_series/" + std::to_string(j) + "/sim_" + std::to_string(i) + ".vtp";
+			dataset.append_attribute("file") = out.c_str();
+		}
 	}
 
-	//std::ofstream outFile;
-	//outFile.open(m_dir+filename);
-	//doc.save(outFile);
-	//outFile.close();
+	std::ofstream outFile;
+	outFile.open(m_dir+filename);
+	doc.save(outFile);
+	outFile.close();
 }
 
 

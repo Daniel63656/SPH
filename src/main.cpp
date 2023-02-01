@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include "output_writer/body.h"
 #include "settings/settings.h"
 #include "simulation/simulation.h"
 #include "kernelFunctions/gaussian.h"
@@ -28,11 +29,18 @@ int main(int argc, char* argv[])
 
 	Gaussian kernel(settings.smoothness);
 
-	// OutputWriter writer;
-	Simulation simulation(settings, &kernel);
-	// VtkWriter vtkWriter(simulation.getGrid());
 
-	simulation.run();
+    MPI_Vars info{0,1,0,settings.numberOfParticles, settings.numberOfParticles, 0};
+
+    OutputWriter writer(info, settings.vs_dt, "out");
+
+
+    Simulation simulation(settings, &kernel);
+//    VtkWriter vtkWriter(simulation.getGrid());
+
+    simulation.run(writer);
+
+    writer.write_pvd("sim");
 
 	return EXIT_SUCCESS;
 }
