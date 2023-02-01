@@ -21,17 +21,17 @@ void Simulation::initializeParticles()
 
 	std::array<double, 2> spacing{ m_settings.physicalSize[0] / domainSizeX, m_settings.physicalSize[1] / domainSizeY };
 
-    for (int y = 0; y < domainSizeY; y++)
-    {
-        for (int x = 0; x < domainSizeX; x++)
-        {
-            particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
-        }
-    }
+	for (int y = 0; y < domainSizeY; y++)
+	{
+		for (int x = 0; x < domainSizeX; x++)
+		{
+			particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
+		}
+	}
 
 	for (auto& p : particles)
 	{
-        grid.add(&particles.back());
+		grid.add(&particles.back());
 	}
 
 }
@@ -39,7 +39,7 @@ void Simulation::initializeParticles()
 void Simulation::run(OutputWriter& writer)
 {
 	// testing neighbourhood search / iterator
-	
+
 	//particles.emplace_back(m_settings.mass, Vec2{ 1.0, 0.0 }, Vec2{ 0, 0 });
 	//particles.emplace_back(m_settings.mass, Vec2{ 2.0, 0.0 }, Vec2{ 0, 0 });
 	//particles.emplace_back(m_settings.mass, Vec2{ 3.0, 0.0 }, Vec2{ 0, 0 });
@@ -59,24 +59,27 @@ void Simulation::run(OutputWriter& writer)
 	//{
 	//	std::cout << "pos " << p.position[0] << ", " << p.position[1] << std::endl;
 	//}
-	
 
-    double time = 0;
-    double next_write = m_settings.vs_dt;
-    while (time < m_settings.endTime) {
-        calculateDensityAndPressure();
-        calculateForces();
-        updateParticles();
 
-        if (time >= next_write){
-            writer.write_vtp(particles);
+	double time = 0;
+	double next_write = m_settings.vs_dt;
+	while (time < m_settings.endTime)
+	{
+		leap1();
+		calculateDensityAndPressure();
+		calculateForces();
+		leap2();
+		regenerateGrid();
 
-            next_write += m_settings.vs_dt;
-        }
+		if (time >= next_write) {
+			writer.write_vtp(particles);
 
-        time += m_settings.dt;
-        std::cout << "timestep t=" << time << "\n";
-    }
+			next_write += m_settings.vs_dt;
+		}
+
+		time += m_settings.dt;
+		std::cout << "timestep t=" << time << "\n";
+	}
 }
 
 
@@ -109,7 +112,8 @@ void Simulation::calculateDensityAndPressure() {
 }
 
 
-void Simulation::calculateForces() {
+void Simulation::calculateForces()
+{
 	for (Particle& p_i : particles)
 	{
 		p_i.forces = p_i.rho * m_settings.g;
@@ -125,13 +129,28 @@ void Simulation::calculateForces() {
 }
 
 
-void Simulation::updateParticles() {
-	for (Particle& p_i : particles)
-	{
-		p_i.velocity += m_settings.dt / p_i.rho * p_i.forces;
-		p_i.position += m_settings.dt * p_i.velocity;
-	}
+void Simulation::leap1()
+{
+	const double half_dt = 0.5 * m_settings.dt;
 
+	for (Particle& p : particles)
+	{
+		p.position += p.velocity * half_dt;
+	}
+}
+
+void Simulation::leap2()
+{
+	const double half_dt = 0.5 * m_settings.dt;
+	for (Particle& p : particles)
+	{
+		p.velocity += m_settings.dt / p.rho * p.forces;
+		p.position += p.velocity * half_dt;
+	}
+}
+
+void Simulation::regenerateGrid()
+{
 	//resort Particles into grid datastructures based on updated positions
 	grid.clear();
 	for (Particle& p : particles)

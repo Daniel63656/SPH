@@ -33,5 +33,11 @@ private:
 
     void calculateDensityAndPressure();
     void calculateForces();
-    void updateParticles();
+    //void updateParticles();
+
+    void leap1();
+    void leap2();
+
+    void regenerateGrid();
+
 };
