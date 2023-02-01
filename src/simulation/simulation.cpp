@@ -26,9 +26,14 @@ void Simulation::initializeParticles()
         for (int x = 0; x < domainSizeX; x++)
         {
             particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
-            grid.add(&particles.back());
         }
     }
+
+	for (auto& p : particles)
+	{
+        grid.add(&particles.back());
+	}
+
 }
 
 void Simulation::run(OutputWriter& writer)
@@ -91,7 +96,7 @@ void Simulation::calculateDensityAndPressure() {
 		//	rho += p_j->mass * m_kernel->W(p_i.position - p_j->position);
 		//}
 
-		for (auto particle : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (auto& particle : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			hasNeighbours = true;
 			rho += particle.mass * m_kernel->W(p_i.position - particle.position);
@@ -108,7 +113,7 @@ void Simulation::calculateForces() {
 	for (Particle& p_i : particles)
 	{
 		p_i.forces = p_i.rho * m_settings.g;
-		for (auto p_j : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (auto& p_j : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			double vol_i = p_i.mass / p_i.rho;
 			double vol_j = p_j.mass / p_j.rho;
