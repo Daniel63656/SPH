@@ -12,7 +12,7 @@ Simulation::Simulation(const Settings& settings, const KernelFunction* kernel) :
 
 void Simulation::initializeParticles()
 {
-	////std::array<int, 2> nParticles = {};
+	//std::array<int, 2> nParticles = {};
 	size_t domainSizeX = 0, domainSizeY = 0;
 
 	double area = m_settings.physicalSize[0] * m_settings.physicalSize[1];
@@ -34,23 +34,27 @@ void Simulation::initializeParticles()
 void Simulation::run(OutputWriter& writer)
 {
 	// testing neighbourhood search / iterator
-	/*
-	particles.emplace_back(m_settings.mass, Vec2{ 1.0, 0.0 }, Vec2{ 0, 0 });
-	particles.emplace_back(m_settings.mass, Vec2{ 2.0, 0.0 }, Vec2{ 0, 0 });
-	particles.emplace_back(m_settings.mass, Vec2{ 3.0, 0.0 }, Vec2{ 0, 0 });
-	particles.emplace_back(m_settings.mass, Vec2{ 0.5, 0.0 }, Vec2{ 0, 0 });
-	particles.emplace_back(m_settings.mass, Vec2{ 0.1, 0.7 }, Vec2{ 0, 0 });
+	
+	//particles.emplace_back(m_settings.mass, Vec2{ 1.0, 0.0 }, Vec2{ 0, 0 });
+	//particles.emplace_back(m_settings.mass, Vec2{ 2.0, 0.0 }, Vec2{ 0, 0 });
+	//particles.emplace_back(m_settings.mass, Vec2{ 3.0, 0.0 }, Vec2{ 0, 0 });
+	//particles.emplace_back(m_settings.mass, Vec2{ 0.5, 0.0 }, Vec2{ 0, 0 });
+	//particles.emplace_back(m_settings.mass, Vec2{ 0.1, 0.7 }, Vec2{ 0, 0 });
 
-	for (auto& a : particles)
-	{
-		grid.add(&a);
-	}
+	////find these
+	//particles.emplace_back(m_settings.mass, Vec2{ 3.0, 2.0 }, Vec2{ 0, 0 });
+	//particles.emplace_back(m_settings.mass, Vec2{ 2.0, 2.5 }, Vec2{ 0, 0 });
 
-	for (auto& p : grid.neighbours(Vec2{ 0,0 }, 1.0))
-	{
-		std::cout << "pos " << p.position[0] << ", " << p.position[1] << std::endl;
-	}
-	*/
+	//for (auto& a : particles)
+	//{
+	//	grid.add(&a);
+	//}
+
+	//for (auto& p : grid.neighbours(Vec2{ 3.0,2.5 }, 1.0))
+	//{
+	//	std::cout << "pos " << p.position[0] << ", " << p.position[1] << std::endl;
+	//}
+	
 
     double time = 0;
     double next_write = m_settings.vs_dt;
