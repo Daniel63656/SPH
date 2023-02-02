@@ -25,7 +25,7 @@ void Simulation::initializeParticles()
 	{
 		for (int x = 0; x < nParticlesX; x++)
 		{
-			std::cout << "pos " << x * spacing[0] + spacing[0]/2.0 << ", " << y * spacing[1] + spacing[1] / 2.0 << std::endl;
+			std::cout << "pos " << x * spacing[0] + spacing[0] / 2.0 << ", " << y * spacing[1] + spacing[1] / 2.0 << std::endl;
 			m_particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
 		}
 	}
@@ -36,14 +36,37 @@ void Simulation::initializeParticles()
 
 void Simulation::initializeBoundary()
 {
-    m_boundaryParticlesX = m_settings.boundaryDensity[0] * m_settings.physicalSize[0];
-    m_boundaryParticlesY = m_settings.boundaryDensity[1] * m_settings.physicalSize[0];
-    
-    double pos = 0;
-    for (int i = 0; i < m_boundaryParticlesX; i++){
-        m_particles.emplace_back(0,Vec2{pos, 0}, Vec2{0,0}));
-        pos += 1/m_settings.boundaryDensity[0];
-    }
+	m_boundaryParticlesX = m_settings.boundaryDensity[0] * m_settings.physicalSize[0];
+	m_boundaryParticlesY = m_settings.boundaryDensity[1] * m_settings.physicalSize[0];
+
+	// lower
+	double pos = 0;
+	for (int i = 0; i < m_boundaryParticlesX; i++) {
+		m_boundaryparticles.emplace_back(0, Vec2{ pos, 0 }, Vec2{ 0,0 });
+		pos += 1 / m_settings.boundaryDensity[0];
+	}
+
+	// upper
+	pos = 0;
+	for (int i = 0; i < m_boundaryParticlesX; i++) {
+		m_boundaryparticles.emplace_back(0, Vec2{ pos, m_settings.physicalSize[1] }, Vec2{ 0,0 });
+		pos += 1 / m_settings.boundaryDensity[0];
+	}
+
+	// left
+	pos = 0;
+	for (int i = 0; i < m_boundaryParticlesY; i++) {
+		m_boundaryparticles.emplace_back(0, Vec2{ 0, pos }, Vec2{ 0,0 });
+		pos += 1 / m_settings.boundaryDensity[1];
+	}
+
+	// right
+	pos = 0;
+	for (int i = 0; i < m_boundaryParticlesY; i++) {
+		m_boundaryparticles.emplace_back(0, Vec2{ m_settings.physicalSize[0], pos }, Vec2{ 0,0 });
+		pos += 1 / m_settings.boundaryDensity[1];
+	}
+
 }
 
 void Simulation::run(OutputWriter& writer)
@@ -151,7 +174,7 @@ void Simulation::leap2()
 	{
 		p.velocity += m_settings.dt / p.rho * p.forces;
 		p.position += p.velocity * half_dt;
-        std::cout << p.position << std::endl;
+		std::cout << p.position << std::endl;
 	}
 }
 
@@ -160,6 +183,10 @@ void Simulation::refillGrid()
 	//resort Particles into grid datastructures based on updated positions
 	m_grid.clear();
 	for (auto& p : m_particles)
+	{
+		m_grid.add(&p);
+	}
+	for (auto& p : m_boundaryparticles)
 	{
 		m_grid.add(&p);
 	}

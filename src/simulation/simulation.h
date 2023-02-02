@@ -30,6 +30,7 @@ private:
 
     Grid m_grid;
     std::vector<Particle> m_particles;
+    std::vector<Particle> m_boundaryparticles;
     int m_boundaryParticlesX;
     int m_boundaryParticlesY;
 
