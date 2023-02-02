@@ -9,7 +9,7 @@ Gaussian::Gaussian(double smoothing) : KernelFunction(smoothing)
     //3d    alpha = 1/(sqrt(pow(M_PI, 3))*pow(h, 3));
 }
 
-double Gaussian::W(Vec2 difference) const {
+double Gaussian::W(Vec2d difference) const {
     double R = difference.magnitude()/h;
     if (R <= 3)
     {
@@ -19,15 +19,17 @@ double Gaussian::W(Vec2 difference) const {
 }
 
 
-Vec2 Gaussian::gradW(Vec2 difference) const {
+Vec2d Gaussian::gradW(Vec2d difference) const {
     double R = difference.magnitude()/h;
-    Vec2 res = Vec2();
+    Vec2d res = Vec2d();
     if (R <= 3) {
         double factor = -2 / (h*h) * exp(-R * R);
-        for (int i = 0; i < 2; i++)
-        {
-            res[i] = alpha*factor * difference[i];
-        }
+        //for (int i = 0; i < 2; i++)
+        //{
+        //    res[i] = alpha*factor * difference[i];
+        //}
+        res.x = alpha * factor * difference.x;
+        res.y = alpha * factor * difference.y;
         return res;
     }
     else {
@@ -37,14 +39,16 @@ Vec2 Gaussian::gradW(Vec2 difference) const {
 }
 
 
-double Gaussian::laplaceW(Vec2 difference) const {
+double Gaussian::laplaceW(Vec2d difference) const {
     double R = difference.magnitude()/h;
     if (R <= 3) {
         double res = 0;
-        for (int i = 0; i < 2; i++)
-        {
-            res += alpha * (4*difference[i]*difference[i] - 2*h*h)/pow(h, 4) * exp(-R * R);
-        }
+        //for (int i = 0; i < 2; i++)
+        //{
+        //    res += alpha * (4*difference[i]*difference[i] - 2*h*h)/pow(h, 4) * exp(-R * R);
+        //}
+        res += alpha * (4 * difference.x * difference.x - 2 * h * h) / pow(h, 4) * exp(-R * R);
+        res += alpha * (4 * difference.y * difference.y - 2 * h * h) / pow(h, 4) * exp(-R * R);
         return res;
     }
     else return 0;

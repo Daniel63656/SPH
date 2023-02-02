@@ -19,9 +19,9 @@ struct Settings
     int numberOfParticles = 100;
 
     // domain
-    std::array<double, 2> physicalSize;         //< dimensions of the domain
-    std::array<int, 2> nCells{};                //< number of cells in all spacial directions
-    std::array<double, 2> boundaryDensity;
+    Vec2d physicalSize;         //< dimensions of the domain
+    Vec2i nCells{};                //< number of cells in all spacial directions
+    Vec2d boundaryDensity;
     //TODO boundary conditions
 
     // time
@@ -30,7 +30,7 @@ struct Settings
     double vs_dt = 1;
 
     //miscellaneous
-    Vec2 g;                          //< external forces
+    Vec2d g;                          //< external forces
     std::string kernelFunction = "GAUSSIAN";
     double smoothness;
 

@@ -66,17 +66,17 @@ void Settings::loadFromFile(const std::string& filename)
 				numberOfParticles = atoi(paramValue.c_str());
 
 			else if (paramName == "physicalSizeX")
-				physicalSize[0] = atof(paramValue.c_str());
+				physicalSize.x = atof(paramValue.c_str());
 			else if (paramName == "physicalSizeY")
-				physicalSize[1] = atof(paramValue.c_str());
+				physicalSize.y = atof(paramValue.c_str());
 			else if (paramName == "nCellsX")
-				nCells[0] = atoi(paramValue.c_str());
+				nCells.x = atoi(paramValue.c_str());
 			else if (paramName == "nCellsY")
-				nCells[1] = atoi(paramValue.c_str());
+				nCells.y = atoi(paramValue.c_str());
             else if (paramName == "boundaryDensityX")
-                boundaryDensity[0] = atof(paramValue.c_str());
+                boundaryDensity.x = atof(paramValue.c_str());
             else if (paramName == "boundaryDensityY")
-                boundaryDensity[1] = atof(paramValue.c_str());
+                boundaryDensity.y = atof(paramValue.c_str());
 
 			else if (paramName == "endTime")
 				endTime = atof(paramValue.c_str());
@@ -84,9 +84,9 @@ void Settings::loadFromFile(const std::string& filename)
 				dt = atof(paramValue.c_str());
 
 			else if (paramName == "gX")
-				g[0] = atof(paramValue.c_str());
+				g.x = atof(paramValue.c_str());
 			else if (paramName == "gY")
-				g[1] = atof(paramValue.c_str());
+				g.y = atof(paramValue.c_str());
 			else if (paramName == "kernelFunction")
 				kernelFunction = paramValue;
 			else if (paramName == "smoothness")
@@ -103,8 +103,8 @@ void Settings::loadFromFile(const std::string& filename)
 void Settings::printSettings() {
 	std::cout << "Settings: " << std::endl
 		<< "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << numberOfParticles << std::endl
-		<< "physicalSize: " << physicalSize[0] << " x " << physicalSize[1] << std::endl
-		<< "cells: " << nCells[0] << " x " << nCells[1] << std::endl
+		<< "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
+		<< "cells: " << nCells.x << " x " << nCells.y << std::endl
 		<< "time: " << endTime << " in " << dt << " steps\n"
-		<< "g: (" << g[0] << "," << g[1] << "), kernel: " << kernelFunction << "(" << smoothness << ")\n";
+		<< "g: (" << g.x << "," << g.y << "), kernel: " << kernelFunction << "(" << smoothness << ")\n";
 }

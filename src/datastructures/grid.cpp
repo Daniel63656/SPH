@@ -4,12 +4,14 @@
 
 Grid::Grid(const Settings& settings) : m_settings(settings)
 {
-	nTotal = 1;
-	for (int i = 0; i < 2; i++)
-	{
-		meshWidth[i] = m_settings.physicalSize[i] / (float)m_settings.nCells[i];
-		nTotal *= m_settings.nCells[i];
-	}
+	//nTotal = 1;
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	meshWidth[i] = m_settings.physicalSize[i] / (float)m_settings.nCells[i];
+	//	nTotal *= m_settings.nCells[i];
+	//}
+	m_meshWidth = m_settings.physicalSize / m_settings.nCells;
+	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
 	//initialize vectors for each gridCell
 	grid.reserve(nTotal);
@@ -33,7 +35,7 @@ void Grid::add(Particle* p)
 	grid[idx].push_back(p);
 }
 
-Neighbourhood Grid::neighbours(const Vec2& center, double radius)
+Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
 {
 	return Neighbourhood(this, center, radius);
 }
@@ -61,20 +63,31 @@ Neighbourhood Grid::neighbours(const Vec2& center, double radius)
 //	return neighbours;
 //}
 
-std::array<int, 2> Grid::discretizedPosition(Vec2 v) {
-	std::array<int, 2> discretePos{};
-	for (int i = 0; i < 2; i++)
-	{
-		discretePos[i] = int(v[i] / meshWidth[i]);
-		//TODO this is just a temporary hack. Particles need to be stopped from leaving the domain in the first place!
-		discretePos[i] = (discretePos[i] < 0) ? 0 : discretePos[i];
-		discretePos[i] = (discretePos[i] >= m_settings.nCells[i]) ? m_settings.nCells[i] - 1 : discretePos[i];
-	}
+Vec2i Grid::discretizedPosition(Vec2d v) {
+	Vec2i discretePos;
+	discretePos.x = int(v.x / m_meshWidth.x);
+	discretePos.y = int(v.y / m_meshWidth.y);
+
+	discretePos.x = (discretePos.x < 0) ? 0 : discretePos.x;
+	discretePos.y = (discretePos.y < 0) ? 0 : discretePos.y;
+
+	discretePos.x = (discretePos.x >= m_settings.nCells.x) ? m_settings.nCells.x - 1 : discretePos.x;
+	discretePos.y = (discretePos.y >= m_settings.nCells.y) ? m_settings.nCells.y - 1 : discretePos.y;
+
 	return discretePos;
+
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	discretePos[i] = int(v[i] / meshWidth[i]);
+	//	//TODO this is just a temporary hack. Particles need to be stopped from leaving the domain in the first place!
+	//	discretePos[i] = (discretePos[i] < 0) ? 0 : discretePos[i];
+	//	discretePos[i] = (discretePos[i] >= m_settings.nCells[i]) ? m_settings.nCells[i] - 1 : discretePos[i];
+	//}
+	//return discretePos;
 }
 
 //! map 2-dimensional index-vector into a unique, seamless scalar index
-int Grid::pos2idx(std::array<int, 2> pos)
+int Grid::pos2idx(Vec2i pos)
 {
-	return pos[0] + m_settings.nCells[0] * pos[1];
+	return pos.x + m_settings.nCells.x * pos.y;
 }

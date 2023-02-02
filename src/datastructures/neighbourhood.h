@@ -62,7 +62,7 @@ public:
 public:
     using Iterator = NeighbourhoodIterator;
 
-    Neighbourhood(Grid* grid, const Vec2& center, double radius) : m_grid(grid), m_center(center), m_radius(radius)
+    Neighbourhood(Grid* grid, const Vec2d& center, double radius) : m_grid(grid), m_center(center), m_radius(radius)
     {
         nCells = grid->m_settings.nCells;
     }
@@ -84,7 +84,7 @@ public:
         return m_grid->grid;
     }
 
-    inline Vec2 getCenter() const
+    inline Vec2d getCenter() const
     {
         return m_center;
     }
@@ -95,9 +95,9 @@ public:
     }
 
 public:
-    std::array<int, 2> nCells{};
+    Vec2i nCells;
 private:
     Grid* m_grid;
-    Vec2 m_center;
+    Vec2d m_center;
     double m_radius;
 };

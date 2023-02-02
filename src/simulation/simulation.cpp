@@ -15,18 +15,18 @@ void Simulation::initializeParticles()
 	//std::array<int, 2> nParticles = {};
 	size_t nParticlesX = 0, nParticlesY = 0;
 
-	double area = m_settings.physicalSize[0] * m_settings.physicalSize[1];
-	nParticlesX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles / area));
+	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
+	nParticlesX = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.numberOfParticles / area));
 	nParticlesY = m_settings.numberOfParticles / nParticlesX;
 
-	std::array<double, 2> spacing{ m_settings.physicalSize[0] / nParticlesX, m_settings.physicalSize[1] / nParticlesY };
+	Vec2d spacing{ m_settings.physicalSize.x / nParticlesX, m_settings.physicalSize.y / nParticlesY };
 
 	for (int y = 0; y < nParticlesY; y++)
 	{
 		for (int x = 0; x < nParticlesX; x++)
 		{
-			std::cout << "pos " << x * spacing[0] + spacing[0] / 2.0 << ", " << y * spacing[1] + spacing[1] / 2.0 << std::endl;
-			m_particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
+			std::cout << "pos " << x * spacing.x + spacing.x / 2.0 << ", " << y * spacing.y + spacing.y / 2.0 << std::endl;
+			m_particles.emplace_back(m_settings.mass, Vec2d(x* spacing.x, y* spacing.y), Vec2d(0, 0));
 		}
 	}
 
@@ -36,35 +36,35 @@ void Simulation::initializeParticles()
 
 void Simulation::initializeBoundary()
 {
-	m_boundaryParticlesX = m_settings.boundaryDensity[0] * m_settings.physicalSize[0];
-	m_boundaryParticlesY = m_settings.boundaryDensity[1] * m_settings.physicalSize[0];
+	m_boundaryParticlesX = m_settings.boundaryDensity.x * m_settings.physicalSize.x;
+	m_boundaryParticlesY = m_settings.boundaryDensity.y * m_settings.physicalSize.y;
 
 	// lower
 	double pos = 0;
 	for (int i = 0; i < m_boundaryParticlesX; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2{ pos, 0 }, Vec2{ 0,0 });
-		pos += 1 / m_settings.boundaryDensity[0];
+		m_boundaryparticles.emplace_back(0, Vec2d(pos, 0 ), Vec2d(0,0));
+		pos += 1 / m_settings.boundaryDensity.x;
 	}
 
 	// upper
 	pos = 0;
 	for (int i = 0; i < m_boundaryParticlesX; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2{ pos, m_settings.physicalSize[1] }, Vec2{ 0,0 });
-		pos += 1 / m_settings.boundaryDensity[0];
+		m_boundaryparticles.emplace_back(0, Vec2d(pos, m_settings.physicalSize.y ), Vec2d(0, 0));
+		pos += 1 / m_settings.boundaryDensity.x;
 	}
 
 	// left
 	pos = 0;
 	for (int i = 0; i < m_boundaryParticlesY; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2{ 0, pos }, Vec2{ 0,0 });
-		pos += 1 / m_settings.boundaryDensity[1];
+		m_boundaryparticles.emplace_back(0, Vec2d(0, pos ), Vec2d(0, 0));
+		pos += 1 / m_settings.boundaryDensity.y;
 	}
 
 	// right
 	pos = 0;
 	for (int i = 0; i < m_boundaryParticlesY; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2{ m_settings.physicalSize[0], pos }, Vec2{ 0,0 });
-		pos += 1 / m_settings.boundaryDensity[1];
+		m_boundaryparticles.emplace_back(0, Vec2d(m_settings.physicalSize.x, pos ), Vec2d(0, 0));
+		pos += 1 / m_settings.boundaryDensity.y;
 	}
 
 }

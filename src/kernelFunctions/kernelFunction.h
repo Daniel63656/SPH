@@ -11,9 +11,9 @@ public:
     explicit KernelFunction(double smoothing) : h{smoothing}
     {}
 
-    virtual double W(Vec2 difference) const = 0;
-    virtual Vec2 gradW(Vec2 difference) const = 0;
-    virtual double laplaceW(Vec2 difference) const = 0;
+    virtual double W(Vec2d difference) const = 0;
+    virtual Vec2d gradW(Vec2d difference) const = 0;
+    virtual double laplaceW(Vec2d difference) const = 0;
     virtual double effectiveRadius() const = 0;
 
 protected:

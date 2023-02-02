@@ -2,10 +2,10 @@
 
 Neighbourhood::NeighbourhoodIterator::NeighbourhoodIterator(Neighbourhood* n, size_t outer, size_t inner) : m_ptr(n), index_inner(inner), index_outer(outer)
 {
-    index_lowerbound_x = std::max(0, (int)(n->getCenter()[0] - n->getRadius()));
-    index_upperbound_x = std::min(n->nCells[0], (int)(n->getCenter()[0] + n->getRadius() + 1));
-    index_lowerbound_y = std::max(0, (int)(n->getCenter()[1] - n->getRadius()));
-    index_upperbound_y = std::min(n->nCells[1], (int)(n->getCenter()[1] + n->getRadius() + 1));
+    index_lowerbound_x = std::max(0, (int)(n->getCenter().x - n->getRadius()));
+    index_upperbound_x = std::min(n->nCells.x, (int)(n->getCenter().x + n->getRadius() + 1));
+    index_lowerbound_y = std::max(0, (int)(n->getCenter().y - n->getRadius()));
+    index_upperbound_y = std::min(n->nCells.y, (int)(n->getCenter().y + n->getRadius() + 1));
 }
 
 void Neighbourhood::NeighbourhoodIterator::findNextElement()
@@ -27,8 +27,8 @@ void Neighbourhood::NeighbourhoodIterator::findNextElement()
         }
 
         // get the x,y index from index_outer
-        int currentcell_y = index_outer / m_ptr->nCells[1];
-        int currentcell_x = index_outer % m_ptr->nCells[1];
+        int currentcell_y = index_outer / m_ptr->nCells.y;
+        int currentcell_x = index_outer % m_ptr->nCells.y;
 
         // cell is skippable if its not inside our searchbounds
         bool skipablecell = !(index_lowerbound_x <= currentcell_x && currentcell_x <= index_upperbound_x &&
