@@ -18,20 +18,18 @@ public:
 
     void initializeBoundary();
 
-
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
     void run(OutputWriter& writer);
 
     Grid& getGrid();
 
-
 private:
     const Settings& m_settings;
     const KernelFunction* m_kernel;
 
-    Grid grid;
-    std::vector<Particle> particles;
+    Grid m_grid;
+    std::vector<Particle> m_particles;
     int m_boundaryParticlesX;
     int m_boundaryParticlesY;
 
@@ -42,6 +40,5 @@ private:
     void leap1();
     void leap2();
 
-    void regenerateGrid();
-
+    void refillGrid();
 };
