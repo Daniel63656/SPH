@@ -5,7 +5,7 @@
 Simulation::Simulation(const Settings& settings, const KernelFunction* kernel) :
 	m_kernel{ kernel },
 	m_settings{ settings },
-	grid{ settings }
+	m_grid{ settings }
 {
 	initializeParticles();
 }
@@ -13,26 +13,24 @@ Simulation::Simulation(const Settings& settings, const KernelFunction* kernel) :
 void Simulation::initializeParticles()
 {
 	//std::array<int, 2> nParticles = {};
-	size_t domainSizeX = 0, domainSizeY = 0;
+	size_t nParticlesX = 0, nParticlesY = 0;
 
 	double area = m_settings.physicalSize[0] * m_settings.physicalSize[1];
-	domainSizeX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles / area));
-	domainSizeY = m_settings.numberOfParticles / domainSizeX;
+	nParticlesX = (int)std::lround(m_settings.physicalSize[0] * sqrt(m_settings.numberOfParticles / area));
+	nParticlesY = m_settings.numberOfParticles / nParticlesX;
 
-	std::array<double, 2> spacing{ m_settings.physicalSize[0] / domainSizeX, m_settings.physicalSize[1] / domainSizeY };
+	std::array<double, 2> spacing{ m_settings.physicalSize[0] / nParticlesX, m_settings.physicalSize[1] / nParticlesY };
 
-	for (int y = 0; y < domainSizeY; y++)
+	for (int y = 0; y < nParticlesY; y++)
 	{
-		for (int x = 0; x < domainSizeX; x++)
+		for (int x = 0; x < nParticlesX; x++)
 		{
-			particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
+			std::cout << "pos " << x * spacing[0] + spacing[0]/2.0 << ", " << y * spacing[1] + spacing[1] / 2.0 << std::endl;
+			m_particles.emplace_back(m_settings.mass, Vector<2>{x* spacing[0], y* spacing[1]}, Vector<2>{0, 0});
 		}
 	}
 
-	for (auto& p : particles)
-	{
-		grid.add(&particles.back());
-	}
+	refillGrid();
 
 }
 
@@ -69,10 +67,10 @@ void Simulation::run(OutputWriter& writer)
 		calculateDensityAndPressure();
 		calculateForces();
 		leap2();
-		regenerateGrid();
+		refillGrid();
 
 		if (time >= next_write) {
-			writer.write_vtp(particles);
+			writer.write_vtp(m_particles);
 
 			next_write += m_settings.vs_dt;
 		}
@@ -84,40 +82,35 @@ void Simulation::run(OutputWriter& writer)
 
 
 Grid& Simulation::getGrid() {
-	return grid;
+	return m_grid;
 }
 
 void Simulation::calculateDensityAndPressure() {
 
-	for (Particle& p_i : particles)
+	for (Particle& particle : m_particles)
 	{
 		double rho = 0;
 		bool hasNeighbours = false;
-		//for (const Particle* p_j : grid.neighbours(p_i, m_kernel->effectiveRadius()))
-		//{
-		//	hasNeighbours = true;
-		//	rho += p_j->mass * m_kernel->W(p_i.position - p_j->position);
-		//}
 
-		for (auto& particle : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 		{
 			hasNeighbours = true;
-			rho += particle.mass * m_kernel->W(p_i.position - particle.position);
+			rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
 		}
 
 		assert(hasNeighbours);
-		p_i.rho = rho;
-		p_i.pressure = m_settings.kappa * (pow(rho / m_settings.rho_0, 7) - 1);
+		particle.rho = rho;
+		particle.pressure = m_settings.kappa * (pow(rho / m_settings.rho_0, 7) - 1);
 	}
 }
 
 
 void Simulation::calculateForces()
 {
-	for (Particle& p_i : particles)
+	for (auto& p_i : m_particles)
 	{
 		p_i.forces = p_i.rho * m_settings.g;
-		for (auto& p_j : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			double vol_i = p_i.mass / p_i.rho;
 			double vol_j = p_j.mass / p_j.rho;
@@ -133,7 +126,7 @@ void Simulation::leap1()
 {
 	const double half_dt = 0.5 * m_settings.dt;
 
-	for (Particle& p : particles)
+	for (auto& p : m_particles)
 	{
 		p.position += p.velocity * half_dt;
 	}
@@ -142,19 +135,19 @@ void Simulation::leap1()
 void Simulation::leap2()
 {
 	const double half_dt = 0.5 * m_settings.dt;
-	for (Particle& p : particles)
+	for (auto& p : m_particles)
 	{
 		p.velocity += m_settings.dt / p.rho * p.forces;
 		p.position += p.velocity * half_dt;
 	}
 }
 
-void Simulation::regenerateGrid()
+void Simulation::refillGrid()
 {
 	//resort Particles into grid datastructures based on updated positions
-	grid.clear();
-	for (Particle& p : particles)
+	m_grid.clear();
+	for (auto& p : m_particles)
 	{
-		grid.add(&p);
+		m_grid.add(&p);
 	}
 }
