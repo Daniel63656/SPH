@@ -41,7 +41,8 @@ void Simulation::initializeBoundary()
     
     double pos = 0;
     for (int i = 0; i < m_boundaryParticlesX; i++){
-        particles
+        m_particles.emplace_back(0,Vec2{pos, 0}, Vec2{0,0}));
+        pos += 1/m_settings.boundaryDensity[0];
     }
 }
 
