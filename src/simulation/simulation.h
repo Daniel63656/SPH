@@ -16,6 +16,8 @@ public:
 
     void initializeParticles();
 
+    void initializeBoundary();
+
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
@@ -30,6 +32,8 @@ private:
 
     Grid grid;
     std::vector<Particle> particles;
+    int m_boundaryParticlesX;
+    int m_boundaryParticlesY;
 
     void calculateDensityAndPressure();
     void calculateForces();

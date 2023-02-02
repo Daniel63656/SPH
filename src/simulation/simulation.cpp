@@ -36,6 +36,17 @@ void Simulation::initializeParticles()
 
 }
 
+void Simulation::initializeBoundary()
+{
+    m_boundaryParticlesX = m_settings.boundaryDensity[0] * m_settings.physicalSize[0];
+    m_boundaryParticlesY = m_settings.boundaryDensity[1] * m_settings.physicalSize[0];
+    
+    double pos = 0;
+    for (int i = 0; i < m_boundaryParticlesX; i++){
+        particles
+    }
+}
+
 void Simulation::run(OutputWriter& writer)
 {
 	// testing neighbourhood search / iterator
@@ -117,6 +128,7 @@ void Simulation::calculateForces()
 	for (Particle& p_i : particles)
 	{
 		p_i.forces = p_i.rho * m_settings.g;
+        
 		for (auto& p_j : grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			double vol_i = p_i.mass / p_i.rho;
@@ -146,6 +158,7 @@ void Simulation::leap2()
 	{
 		p.velocity += m_settings.dt / p.rho * p.forces;
 		p.position += p.velocity * half_dt;
+        std::cout << p.position << std::endl;
 	}
 }
 

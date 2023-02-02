@@ -73,6 +73,10 @@ void Settings::loadFromFile(const std::string& filename)
 				nCells[0] = atoi(paramValue.c_str());
 			else if (paramName == "nCellsY")
 				nCells[1] = atoi(paramValue.c_str());
+            else if (paramName == "boundaryDensityX")
+                boundaryDensity[0] = atof(paramValue.c_str());
+            else if (paramName == "boundaryDensityY")
+                boundaryDensity[1] = atof(paramValue.c_str());
 
 			else if (paramName == "endTime")
 				endTime = atof(paramValue.c_str());
