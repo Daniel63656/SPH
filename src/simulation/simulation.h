@@ -12,11 +12,13 @@
 class Simulation
 {
 public:
-    Simulation(const Settings& settings, const KernelFunction* kernel);
+    Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info);
 
     void initializeParticles();
 
     void initializeBoundary();
+
+    void updateBoundary();
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
@@ -37,6 +39,7 @@ private:
     void calculateDensityAndPressure();
     void calculateForces();
     //void updateParticles();
+    MPI_Vars& m_mpi_info;
 
     void leap1();
     void leap2();

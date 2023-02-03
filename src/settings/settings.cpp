@@ -82,6 +82,8 @@ void Settings::loadFromFile(const std::string& filename)
 				endTime = atof(paramValue.c_str());
 			else if (paramName == "dt")
 				dt = atof(paramValue.c_str());
+            else if (paramName == "vs_dt")
+                vs_dt = atof(paramValue.c_str());
 
 			else if (paramName == "gX")
 				g.x = atof(paramValue.c_str());
@@ -105,6 +107,7 @@ void Settings::printSettings() {
 		<< "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << numberOfParticles << std::endl
 		<< "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
 		<< "cells: " << nCells.x << " x " << nCells.y << std::endl
+        << "boundaryDensity: " << boundaryDensity.x << "," << boundaryDensity.y << std::endl
 		<< "time: " << endTime << " in " << dt << " steps\n"
 		<< "g: (" << g.x << "," << g.y << "), kernel: " << kernelFunction << "(" << smoothness << ")\n";
 }

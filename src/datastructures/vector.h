@@ -169,7 +169,7 @@ struct Vec2
 	//}
 
 	//! get the number of elements
-	int size() const { return N; };
+	//int size() const { return N; };
 
 	double magnitude() {
 		return sqrt(x*x + y*y);
@@ -219,7 +219,7 @@ struct Vec2
 	{
 		std::ostringstream out;
 		out.precision(n);
-		out << std::scientific << x << " " << y;
+		out << std::scientific << x << " " << y << " 0";
 		return out.str();
 	}
 };

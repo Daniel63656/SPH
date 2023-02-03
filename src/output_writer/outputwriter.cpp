@@ -5,12 +5,12 @@
 #include <string>
 #include <filesystem>
 
-OutputWriter::OutputWriter(MPI_Vars mpi_info, double vs_dt,  std::string path): m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(path)
+OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt,  std::string path): m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(path)
 {
 	create_dirs();
-	build_tree();
+	//build_tree();
 	m_step = 0;
-	m_path = m_dir + std::string("time_series/") + std::string("/sim_");
+	m_path = m_dir + std::string("time_series/") + std::string("sim_");
 }
 
 void OutputWriter::create_dirs()
@@ -37,6 +37,7 @@ void OutputWriter::create_dirs()
 void OutputWriter::build_tree()
 {
 
+    std::cout << "particle size:    " << m_mpi_info.arrayend << std::endl;
 	pugi::xml_node vtkfile = m_doc.append_child("VTKFile");
 	vtkfile.append_attribute("type") = "PolyData";
 	vtkfile.append_attribute("version") = "0.1";
@@ -52,17 +53,17 @@ void OutputWriter::build_tree()
 	m_position = points.append_child("DataArray");
 	m_position.append_attribute("type") = "Float64";
 	m_position.append_attribute("Name") = "position";
-	m_position.append_attribute("NumberOfComponents") = "2";
+	m_position.append_attribute("NumberOfComponents") = "3";
 	m_position.append_attribute("format") = "ascii";
 
 
 	pugi::xml_node pointdata = piece.append_child("PointData");
-
+	
 	// velocity
 	m_velocity = pointdata.append_child("DataArray");
 	m_velocity.append_attribute("type") = "Float64";
 	m_velocity.append_attribute("Name") = "velocity";
-	m_velocity.append_attribute("NumberOfComponents") = "2";
+	m_velocity.append_attribute("NumberOfComponents") = "3";
 	m_velocity.append_attribute("format") = "ascii";
 
 
@@ -70,11 +71,11 @@ void OutputWriter::build_tree()
 	m_forces = pointdata.append_child("DataArray");
 	m_forces.append_attribute("type") = "Float64";
 	m_forces.append_attribute("Name") = "force";
-	m_forces.append_attribute("NumberOfComponents") = "2";
+	m_forces.append_attribute("NumberOfComponents") = "3";
 	m_forces.append_attribute("format") = "ascii";
 
 
-	// angle
+	/*// angle
 	m_mass = pointdata.append_child("DataArray");
 	m_mass.append_attribute("type") = "Float64";
 	m_mass.append_attribute("Name") = "mass";
@@ -95,7 +96,7 @@ void OutputWriter::build_tree()
 	m_pressure.append_attribute("type") = "Float64";
 	m_pressure.append_attribute("Name") = "pressure";
 	m_pressure.append_attribute("NumberOfComponents") = "1";
-	m_pressure.append_attribute("format") = "ascii";
+	m_pressure.append_attribute("format") = "ascii";*/
 
 
 	//
@@ -122,6 +123,8 @@ void OutputWriter::build_tree()
 		out += std::to_string(i - m_mpi_info.arraystart) + " ";
 	}
 	m_conn.text() = out.c_str();
+
+
 }
 
 
@@ -140,9 +143,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 		pos   += particle.position.serialize().c_str();
 		vel   += particle.velocity.serialize().c_str();
 		force   += particle.forces.serialize().c_str();
-	    mass   += particle.mass;
-		rho += particle.rho;
-		pressure += particle.pressure;
+	    mass   += std::to_string(particle.mass);
+		rho += std::to_string(particle.rho);
+		pressure += std::to_string(particle.pressure);
 		pos += "\n";
 		vel += "\n";
 		force += "\n";
@@ -153,9 +156,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
 	m_forces.text() = force.c_str();
-	m_mass.text() = mass.c_str();
-	m_rho.text() = rho.c_str();
-	m_pressure.text() = pressure.c_str();
+	//m_mass.text() = mass.c_str();
+	//m_rho.text() = rho.c_str();
+	//m_pressure.text() = pressure.c_str();
 
 
 	//m_kin_e.text() = m_glob.kin_e;

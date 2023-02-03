@@ -8,15 +8,15 @@
 class OutputWriter
 {
 public:
-	OutputWriter(MPI_Vars mpi_info, double vs_dt,  std::string path);
+	OutputWriter(MPI_Vars& mpi_info, double vs_dt,  std::string path);
 
 	void write_vtp(std::vector<Particle>& particles);
 
 	void write_pvd(std::string filename);
+	void build_tree();
 
 	int steps;
 private:
-	void build_tree();
 	void create_dirs();
 	pugi::xml_document m_doc;
 	pugi::xml_node m_position;
@@ -32,7 +32,7 @@ private:
 	double m_vs_dt;
 	double m_endtime;
 
-    MPI_Vars m_mpi_info;
+    MPI_Vars& m_mpi_info;
 	std::string m_dir;
 	std::string m_path;
 };
