@@ -9,7 +9,7 @@ Simulation::Simulation(const Settings& settings, const KernelFunction* kernel, M
     m_mpi_info(mpi_info)
 {
 	initializeParticles();
-    initializeBoundary();
+    //initializeBoundary();
    
     m_mpi_info.arrayend = m_particles.size() + m_boundaryparticles.size();
 
@@ -21,11 +21,17 @@ void Simulation::initializeParticles()
 	//std::array<int, 2> nParticles = {};
 	size_t nParticlesX = 0, nParticlesY = 0;
 
-	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
-	nParticlesX = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.numberOfParticles / area));
-	nParticlesY = m_settings.numberOfParticles / nParticlesX;
+    double b_thickness = m_settings.boundaryThickness;
 
-	Vec2d spacing{ m_settings.physicalSize.x / nParticlesX, m_settings.physicalSize.y / nParticlesY };
+	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
+    double boundary_area = (m_settings.physicalSize.x + 2* b_thickness) * (m_settings.physicalSize.y + 2*b_thickness);
+
+    int numberOfParticles = (int)(m_settings.particleDensity * boundary_area);
+    std::cout << "# of particles: " << numberOfParticles << std::endl;
+	nParticlesX = (int)std::lround(m_settings.physicalSize.x * sqrt(numberOfParticles / area));
+	nParticlesY = numberOfParticles / nParticlesX;
+
+	Vec2d spacing{ (m_settings.physicalSize.x + 2* b_thickness)/ nParticlesX, (m_settings.physicalSize.y+ 2* b_thickness) / nParticlesY };
 
 	for (int y = 0; y < nParticlesY; y++)
 	{
@@ -33,7 +39,11 @@ void Simulation::initializeParticles()
 		{
             double xPos = x * spacing.x + spacing.x / 2.0;
             double yPos = y * spacing.y + spacing.y / 2.0;
-			m_particles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
+
+            if (xPos > b_thickness && xPos < m_settings.physicalSize.x+b_thickness && yPos > b_thickness && yPos < m_settings.physicalSize.y+b_thickness)
+			    m_particles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
+            else
+			    m_boundaryparticles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
 		}
 	}
 
@@ -45,33 +55,53 @@ void Simulation::initializeBoundary()
 	m_boundaryParticlesX = m_settings.boundaryDensity.x * m_settings.physicalSize.x;
 	m_boundaryParticlesY = m_settings.boundaryDensity.y * m_settings.physicalSize.y;
 
+    double xDist = sqrt(m_settings.numberOfParticles)/m_settings.physicalSize.x;
+    double yDist = xDist;
+
 	// lower
-	double pos = 0;
-	for (int i = 0; i <= m_boundaryParticlesX; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2d(pos, 0 ), Vec2d(0,0));
-		pos += 1 / m_settings.boundaryDensity.x;
-	}
+	double xpos = 0;
+    double ypos = 0;
+    for (int j = 0; j < 5; j++){
+	    xpos = 0;
+        for (int i = 0; i <= m_boundaryParticlesX; i++) {
+            m_boundaryparticles.emplace_back(0, Vec2d(xpos, ypos ), Vec2d(0,0));
+            xpos += 1 / m_settings.boundaryDensity.x;
+        }
+        ypos -= 0.1;
+    }
 
 	// upper
-	pos = 0;
-	for (int i = 0; i <= m_boundaryParticlesX; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2d(pos, m_settings.physicalSize.y ), Vec2d(0, 0));
-		pos += 1 / m_settings.boundaryDensity.x;
-	}
+    ypos = m_settings.physicalSize.y;
+    for (int j = 0; j < 5; j++){
+        xpos = 0;
+        for (int i = 0; i <= m_boundaryParticlesX; i++) {
+            m_boundaryparticles.emplace_back(0, Vec2d(xpos, ypos ), Vec2d(0, 0));
+            xpos += 1 / m_settings.boundaryDensity.x;
+        }
+        ypos += 0.1;
+    }
 
-	// left
-	pos = 1/m_settings.boundaryDensity.y;
-	for (int i = 1; i < m_boundaryParticlesY; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2d(0, pos ), Vec2d(0, 0));
-		pos += 1 / m_settings.boundaryDensity.y;
-	}
+    // left
+    xpos = 0;
+    for (int j = 0; j < 5; j++){
+        ypos = 1/m_settings.boundaryDensity.y;
+        for (int i = 1; i < m_boundaryParticlesY; i++) {
+            m_boundaryparticles.emplace_back(0, Vec2d(xpos, ypos ), Vec2d(0, 0));
+            ypos += 1 / m_settings.boundaryDensity.y;
+        }
+        xpos -= 0.1;
+    }
 
-	// right
-	pos = 1/m_settings.boundaryDensity.y;
-	for (int i = 1; i < m_boundaryParticlesY; i++) {
-		m_boundaryparticles.emplace_back(0, Vec2d(m_settings.physicalSize.x, pos ), Vec2d(0, 0));
-		pos += 1 / m_settings.boundaryDensity.y;
-	}
+    // right
+    xpos = m_settings.physicalSize.x;
+    for (int j = 0; j < 5; j++){
+        ypos = 1/m_settings.boundaryDensity.y;
+        for (int i = 1; i < m_boundaryParticlesY; i++) {
+            m_boundaryparticles.emplace_back(0, Vec2d(xpos, ypos ), Vec2d(0, 0));
+            ypos += 1 / m_settings.boundaryDensity.y;
+        }
+        xpos += 0.1;
+    }
 
 }
 
@@ -152,13 +182,16 @@ void Simulation::calculateDensityAndPressure() {
 	{
 		double rho = 0;
 		bool hasNeighbours = false;
+        int count = 0;
 
-		for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
+		for (const auto neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 		{
 			hasNeighbours = true;
-			rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
+            count++;
+			rho += neighbour_particle->mass * m_kernel->W(particle.position - neighbour_particle->position);
 		}
-
+        //std::cout << particle.position << std::endl;
+        //std::cout << count << std::endl;
 
 		assert(hasNeighbours);
 		particle.rho = rho;
@@ -171,10 +204,10 @@ void Simulation::calculateDensityAndPressure() {
 		double rho = 0;
 		bool hasNeighbours = false;
 
-		for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
+		for (const auto neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 		{
 			hasNeighbours = true;
-			rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
+			rho += neighbour_particle->mass * m_kernel->W(particle.position - neighbour_particle->position);
 		}
         //std::cout << rho << std::endl;;
 
@@ -190,27 +223,20 @@ void Simulation::calculateForces()
 {
 	for (auto& p_i : m_particles)
 	{
-        int count = 0;
 		p_i.forces = p_i.rho * m_settings.g;
-		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
-            if (&p_i == &p_j){
-                continue;
-            }
-            count++;
-
 			double vol_i = p_i.mass / p_i.rho;
-			double vol_j = p_j.mass / p_j.rho;
+			double vol_j = p_j->mass / p_j->rho;
 
-            /*if (p_j.position.y == 0 || p_j.position.x == 0){
-                std::cout << p_j.position.serialize(2) << ". " << (p_i.pressure * vol_i + p_j.pressure * vol_j) / 2 * m_kernel->gradW(p_i.position - p_j.position)
-				+ (p_i.velocity * vol_i - p_j.velocity * vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j.position) << std::endl;
+            /*if (p_j->position.y == 0 || p_j->position.x == 0){
+                std::cout << p_j->position.serialize(2) << ". " << (p_i.pressure * vol_i + p_j->pressure * vol_j) / 2 * m_kernel->gradW(p_i.position - p_j->position)
+				+ (p_i.velocity * vol_i - p_j->velocity * vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j->position) << std::endl;
             }*/
 
-			p_i.forces += (p_i.pressure * vol_i + p_j.pressure * vol_j) / 2 * m_kernel->gradW(p_i.position - p_j.position)
-				+ (p_i.velocity * vol_i - p_j.velocity * vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j.position);
+			p_i.forces += (p_i.pressure * vol_i + p_j->pressure * vol_j) / 2 * m_kernel->gradW(p_i.position - p_j->position)
+				+ (p_i.velocity * vol_i - p_j->velocity * vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j->position);
 		}
-        std::cout << count << std::endl;
 	}
 }
 

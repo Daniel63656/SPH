@@ -62,6 +62,8 @@ void Settings::loadFromFile(const std::string& filename)
 				mass = atof(paramValue.c_str());
 			else if (paramName == "mu")
 				mu = atof(paramValue.c_str());
+			else if (paramName == "particleDensity")
+				particleDensity = atof(paramValue.c_str());
 			else if (paramName == "numberOfParticles")
 				numberOfParticles = atoi(paramValue.c_str());
 
@@ -77,6 +79,8 @@ void Settings::loadFromFile(const std::string& filename)
                 boundaryDensity.x = atof(paramValue.c_str());
             else if (paramName == "boundaryDensityY")
                 boundaryDensity.y = atof(paramValue.c_str());
+            else if (paramName == "boundaryThickness")
+                boundaryThickness = atof(paramValue.c_str());
 
 			else if (paramName == "endTime")
 				endTime = atof(paramValue.c_str());

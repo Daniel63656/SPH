@@ -10,7 +10,10 @@ Grid::Grid(const Settings& settings) : m_settings(settings)
 	//	meshWidth[i] = m_settings.physicalSize[i] / (float)m_settings.nCells[i];
 	//	nTotal *= m_settings.nCells[i];
 	//}
-	m_meshWidth = m_settings.physicalSize / m_settings.nCells;
+    Vec2d size = m_settings.physicalSize;
+    size.x += 2*m_settings.boundaryThickness;
+    size.y += 2*m_settings.boundaryThickness;
+	m_meshWidth = size / m_settings.nCells;
 	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
 	//initialize vectors for each gridCell
@@ -35,33 +38,33 @@ void Grid::add(Particle* p)
 	grid[idx].push_back(p);
 }
 
-Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
+/*Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
 {
 	return Neighbourhood(this, center, radius);
+}*/
+
+
+std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius)
+{
+	//TODO implement as iterator
+
+	std::vector<Particle*> neighbours;
+	//made x inner loop, so we traverse particle collection in the correct order
+	for (int y = std::max(0, (int)(center.y - radius)); y < std::min(m_settings.nCells.y, (int)(center.y + radius) + 1); y++)
+	{
+		for (int x = std::max(0, (int)(center.x - radius)); x < std::min(m_settings.nCells.x, (int)(center.x + radius) + 1); x++)
+		{
+			for (Particle* p : grid[pos2idx({ x, y })])
+			{
+				if (euclideanDistance(p->position, center) <= radius)
+				{
+					neighbours.push_back(p);
+				}
+			}
+		}
+	}
+	return neighbours;
 }
-
-
-//std::vector<Particle*> Grid::neighbours(const Vec2& center, double radius)
-//{
-//	//TODO implement as iterator
-//
-//	std::vector<Particle*> neighbours;
-//	//made x inner loop, so we traverse particle collection in the correct order
-//	for (int y = std::max(0, (int)(center[1] - radius)); y < std::min(m_settings.nCells[1], (int)(center[1] + radius) + 1); y++)
-//	{
-//		for (int x = std::max(0, (int)(center[0] - radius)); x < std::min(m_settings.nCells[0], (int)(center[0] + radius) + 1); x++)
-//		{
-//			for (Particle* p : grid[pos2idx({ x, y })])
-//			{
-//				if (euclideanDistance(p->position, center) <= radius)
-//				{
-//					neighbours.push_back(p);
-//				}
-//			}
-//		}
-//	}
-//	return neighbours;
-//}
 
 Vec2i Grid::discretizedPosition(Vec2d v) {
 	Vec2i discretePos;

@@ -16,12 +16,14 @@ struct Settings
     double rho_0 = 3;                           //< rest density at zero pressure
     double mass = 10.0;                         //< mass of an individual particle
     double mu = 4;                              //< kinematic viscosity of the fluid
+    double particleDensity = 1;
     int numberOfParticles = 100;
 
     // domain
     Vec2d physicalSize;         //< dimensions of the domain
     Vec2i nCells{};                //< number of cells in all spacial directions
     Vec2d boundaryDensity;
+    double boundaryThickness;
     //TODO boundary conditions
 
     // time

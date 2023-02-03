@@ -18,8 +18,9 @@ public:
     void clear();
     void add(Particle* p);
 
-    Neighbourhood neighbours(const Vec2d& center, double radius);
+//    Neighbourhood neighbours(const Vec2d& center, double radius);
 
+    std::vector<Particle*> neighbours(const Vec2d& center, double radius);
 private:
     const Settings& m_settings;
 
