@@ -194,9 +194,9 @@ void Simulation::calculateForces()
 		p_i.forces = p_i.rho * m_settings.g;
 		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
-            if (&p_i == &p_j){
-                continue;
-            }
+            //if (&p_i == &p_j){
+            //    continue;
+            //}
             count++;
 
 			double vol_i = p_i.mass / p_i.rho;
