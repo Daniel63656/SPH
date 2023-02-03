@@ -25,7 +25,7 @@ struct Settings
     Vec2d boundaryDensity;
     double boundaryThickness;
     //TODO boundary conditions
-
+    
     // time
     double endTime = 10;
     double dt = 0.1;

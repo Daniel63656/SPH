@@ -35,7 +35,7 @@ private:
     std::vector<Particle> m_boundaryparticles;
     int m_boundaryParticlesX;
     int m_boundaryParticlesY;
-
+    void calcDensityPresure(Particle& particle);
     void calculateDensityAndPressure();
     void calculateForces();
     //void updateParticles();

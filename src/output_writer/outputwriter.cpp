@@ -144,7 +144,7 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 		vel   += particle.velocity.serialize().c_str();
 		force   += particle.forces.serialize().c_str();
 	    mass   += std::to_string(particle.mass);
-		rho += std::to_string(particle.rho);
+		rho += std::to_string(particle.density);
 		pressure += std::to_string(particle.pressure);
 		pos += "\n";
 		vel += "\n";

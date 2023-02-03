@@ -10,9 +10,9 @@ Grid::Grid(const Settings& settings) : m_settings(settings)
 	//	meshWidth[i] = m_settings.physicalSize[i] / (float)m_settings.nCells[i];
 	//	nTotal *= m_settings.nCells[i];
 	//}
-    Vec2d size = m_settings.physicalSize;
-    size.x += 2*m_settings.boundaryThickness;
-    size.y += 2*m_settings.boundaryThickness;
+	Vec2d size = m_settings.physicalSize;
+	size.x += 2 * m_settings.boundaryThickness;
+	size.y += 2 * m_settings.boundaryThickness;
 	m_meshWidth = size / m_settings.nCells;
 	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
@@ -50,26 +50,37 @@ std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius)
 
 	std::vector<Particle*> neighbours;
 	//made x inner loop, so we traverse particle collection in the correct order
-	for (int y = std::max(0, (int)(center.y - radius)); y < std::min(m_settings.nCells.y, (int)(center.y + radius) + 1); y++)
+	for (int i = 0; i < grid.size(); i++)
 	{
-		for (int x = std::max(0, (int)(center.x - radius)); x < std::min(m_settings.nCells.x, (int)(center.x + radius) + 1); x++)
+		for (Particle* p : grid[i])
 		{
-			for (Particle* p : grid[pos2idx({ x, y })])
+			if (euclideanDistance(p->position, center) <= radius)
 			{
-				if (euclideanDistance(p->position, center) <= radius)
-				{
-					neighbours.push_back(p);
-				}
+				neighbours.push_back(p);
 			}
 		}
+
 	}
+	//for (int y = std::max(0, (int)(center.y - radius)); y < std::min(m_settings.nCells.y, (int)(center.y + radius) + 1); y++)
+	//{
+	//	for (int x = std::max(0, (int)(center.x - radius)); x < std::min(m_settings.nCells.x, (int)(center.x + radius) + 1); x++)
+	//	{
+	//		for (Particle* p : grid[pos2idx(Vec2i( x, y ))])
+	//		{
+	//			if (euclideanDistance(p->position, center) <= radius)
+	//			{
+	//				neighbours.push_back(p);
+	//			}
+	//		}
+	//	}
+	//}
 	return neighbours;
 }
 
 Vec2i Grid::discretizedPosition(Vec2d v) {
 	Vec2i discretePos;
-	discretePos.x = int(v.x / m_meshWidth.x);
-	discretePos.y = int(v.y / m_meshWidth.y);
+	discretePos.x = floor(v.x / m_meshWidth.x);
+	discretePos.y = floor(v.y / m_meshWidth.y);
 
 	discretePos.x = (discretePos.x < 0) ? 0 : discretePos.x;
 	discretePos.y = (discretePos.y < 0) ? 0 : discretePos.y;

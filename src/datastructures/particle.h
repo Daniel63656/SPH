@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "vector.h"
 
@@ -11,7 +11,7 @@ struct Particle
              {}
 
     double mass;
-    double rho = 0;
+    double density = 0;//ρ
     double pressure = 0;
     Vec2d position;
     Vec2d velocity;
