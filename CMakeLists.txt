@@ -15,7 +15,7 @@ target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src/pch.h
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
 find_package(pugixml CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC pugixml::pugixml)
+target_link_libraries(${PROJECT_NAME} PUBLIC pugixml)
 
 # Search for the external package "VTK"
 #find_package(VTK)

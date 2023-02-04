@@ -40,8 +40,7 @@ private:
     //void updateParticles();
     MPI_Vars& m_mpi_info;
 
-    void leap1();
-    void leap2();
+    void leapfrog(bool firstIteration);
 
     void refillGrid();
 };
