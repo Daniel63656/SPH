@@ -2,9 +2,9 @@
 # Run ./numsim lid_driven_cavity.txt
 
 # constants
-kappa = 2.0                     # gas constant
+kappa = 3571.0                     # gas constant
 rho0 = 1000
-mass = 31.378                       # mass of the individual particle
+mass = 3.1378                       # mass of the individual particle
 mu = 0.05                          # kinematic viscosity of the fluid
 particleDensity = 31.58			#particle distance 0.178
 numberOfParticles = 121        # number of particles used in the simulation

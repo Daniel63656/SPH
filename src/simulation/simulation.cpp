@@ -49,6 +49,10 @@ void Simulation::initializeParticles()
                 m_upperParticle = m_boundaryparticles.size()-1;
                 flag = false;
             }
+			if (!flag)
+			{
+				m_boundaryparticles.back().velocity.x = 1;
+			}
 		}
 	}
     std::cout << m_upperParticle << "," << m_boundaryparticles.size() << std::endl;
@@ -106,11 +110,11 @@ void Simulation::run(OutputWriter& writer)
 	while (time < m_settings.endTime)
 	{
 		leap1();
-        updateBoundary();
+        //updateBoundary();
 		calculateDensityAndPressure();
 		calculateForces();
 		leap2();
-        updateBoundary();
+        //updateBoundary();
 		refillGrid();
 
 		if (time >= next_write) {
@@ -160,9 +164,9 @@ void Simulation::calculateDensityAndPressure() {
 	}
 
 #pragma omp parallel for
-	for (int i = 0; i < m_particles.size(); i++)
+	for (int i = 0; i < m_boundaryparticles.size(); i++)
 	{
-		auto& p = m_particles[i];
+		auto& p = m_boundaryparticles[i];
 		calcDensityPresure(p);
 	}
 }
@@ -175,7 +179,7 @@ void Simulation::calculateForces()
 	{
 		auto& p_i = m_particles[i];
 		p_i.forces = p_i.density * m_settings.g;
-		for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			double vol_i = p_i.mass / p_i.density;
 			double vol_j = p_j.mass / p_j.density;

@@ -20,7 +20,7 @@ boundaryDensityY = 20
 boundaryThickness = 2
 
 # time
-endTime = 80.0
+endTime = 30.0
 dt = 0.01
 vs_dt = 0.1
 
