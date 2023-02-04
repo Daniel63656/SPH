@@ -139,7 +139,7 @@ void Simulation::calcDensityPresure(Particle& particle)
 	double rho = 0;
 	bool hasNeighbours = false;
 
-	for (const auto neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
+	for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 	{
 		hasNeighbours = true;
 		rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
@@ -152,22 +152,28 @@ void Simulation::calcDensityPresure(Particle& particle)
 
 void Simulation::calculateDensityAndPressure() {
 
-	for (Particle& particle : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
-		calcDensityPresure(particle);
+		auto& p = m_particles[i];
+		calcDensityPresure(p);
 	}
 
-	for (Particle& particle : m_boundaryparticles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
-		calcDensityPresure(particle);
+		auto& p = m_particles[i];
+		calcDensityPresure(p);
 	}
 }
 
 
 void Simulation::calculateForces()
 {
-	for (auto& p_i : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
+		auto& p_i = m_particles[i];
 		p_i.forces = p_i.density * m_settings.g;
 		for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
@@ -192,13 +198,14 @@ void Simulation::calculateForces()
 	}
 }
 
-
 void Simulation::leap1()
 {
 	const double half_dt = 0.5 * m_settings.dt;
 	std::cout << std::endl;
-	for (auto& p : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
+		auto& p = m_particles[i];
 		p.position += p.velocity * half_dt;
 
 		//std::cout << p.position << std::endl;
@@ -208,9 +215,10 @@ void Simulation::leap1()
 void Simulation::leap2()
 {
 	const double half_dt = 0.5 * m_settings.dt;
-	for (auto& p : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
-
+		auto& p = m_particles[i];
 		//std::cout << "\n" << p.position << std::endl;
 		p.velocity += (p.forces / p.density) * m_settings.dt;
 		p.position += p.velocity * half_dt;

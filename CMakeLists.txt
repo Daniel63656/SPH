@@ -1,4 +1,22 @@
 cmake_minimum_required(VERSION 3.16)
+
+# Find OpenMP
+if(APPLE)
+    
+    OPTION (USE_OpenMP "Use OpenMP to enamble <omp.h>" ON)
+    set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/15.0.6/bin/clang++")
+    set(OPENMP_LIBRARIES "/usr/local/Cellar/llvm/15.0.6/lib")
+    set(OPENMP_INCLUDES "/usr/local/Cellar/llvm/15.0.6/include")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+      set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
+      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
+      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+    endif()
+endif()
+
 project("SPH" VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -17,6 +35,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 find_package(pugixml CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC pugixml::pugixml)
 
+find_package(OpenMP REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 # Search for the external package "VTK"
 #find_package(VTK)
 

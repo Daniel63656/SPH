@@ -18,12 +18,15 @@
 #include <time.h>
 #include <memory>
 #include <sstream>
+#include <thread>
+
 // mpi
 //#include "mpi.h"
 
 // openmp
-//#include <omp.h>
+#include <omp.h>
 
+//pugixml
 #include "pugixml.hpp"
 
 // fmt
