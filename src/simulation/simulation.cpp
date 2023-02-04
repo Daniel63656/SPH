@@ -142,7 +142,7 @@ void Simulation::calcDensityPresure(Particle& particle)
 	for (const auto neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 	{
 		hasNeighbours = true;
-		rho += neighbour_particle->mass * m_kernel->W(particle.position - neighbour_particle->position);
+		rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
 	}
 
 	assert(hasNeighbours);
@@ -172,7 +172,7 @@ void Simulation::calculateForces()
 		for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
 			double vol_i = p_i.mass / p_i.density;
-			double vol_j = p_j->mass / p_j->density;
+			double vol_j = p_j.mass / p_j.density;
 
 			/*if (p_j->position.y == 0 || p_j->position.x == 0){
 				std::cout << p_j->position.serialize(2) << ". " << (p_i.pressure * vol_i + p_j->pressure * vol_j) / 2 * m_kernel->gradW(p_i.position - p_j->position)
@@ -183,8 +183,8 @@ void Simulation::calculateForces()
 			//	- (p_i.velocity * vol_i - p_j->velocity * vol_j) / 2 * m_kernel->laplaceW(p_i.position - p_j->position);
 
 
-			Vec2d pressure = -(1.0 / 2.0) * (p_i.pressure * (p_i.mass / p_i.density) + p_j->pressure * (p_j->mass / p_j->density)) * m_kernel->gradW(p_i.position - p_j->position);
-			Vec2d viscosity = (m_settings.mu / 2.0) * (p_j->velocity * (p_j->mass / p_j->density) - p_i.velocity* (p_i.mass / p_i.density)) * m_kernel->laplaceW(p_i.position - p_j->position);
+			Vec2d pressure = -(1.0 / 2.0) * (p_i.pressure * (p_i.mass / p_i.density) + p_j.pressure * (p_j.mass / p_j.density)) * m_kernel->gradW(p_i.position - p_j.position);
+			Vec2d viscosity = (m_settings.mu / 2.0) * (p_j.velocity * (p_j.mass / p_j.density) - p_i.velocity* (p_i.mass / p_i.density)) * m_kernel->laplaceW(p_i.position - p_j.position);
 
 			p_i.forces += pressure + viscosity;
 

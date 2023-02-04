@@ -11,8 +11,8 @@ Grid::Grid(const Settings& settings) : m_settings(settings)
 	//	nTotal *= m_settings.nCells[i];
 	//}
 	Vec2d size = m_settings.physicalSize;
-	size.x += 2 * m_settings.boundaryThickness;
-	size.y += 2 * m_settings.boundaryThickness;
+	size.x += 2.0 * m_settings.boundaryThickness;
+	size.y += 2.0 * m_settings.boundaryThickness;
 	m_meshWidth = size / m_settings.nCells;
 	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
@@ -34,50 +34,57 @@ void Grid::clear()
 
 void Grid::add(Particle* p)
 {
-	int idx = pos2idx(discretizedPosition(p->position));
+	Vec2i d = discretizedPosition(p->position);
+	int idx = pos2idx(d);
 	grid[idx].push_back(p);
 }
 
-/*Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
+Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
 {
 	return Neighbourhood(this, center, radius);
-}*/
-
-
-std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius)
-{
-	//TODO implement as iterator
-
-	std::vector<Particle*> neighbours;
-	//made x inner loop, so we traverse particle collection in the correct order
-	for (int i = 0; i < grid.size(); i++)
-	{
-		for (Particle* p : grid[i])
-		{
-			if (euclideanDistance(p->position, center) <= radius)
-			{
-				neighbours.push_back(p);
-			}
-		}
-
-	}
-	//for (int y = std::max(0, (int)(center.y - radius)); y < std::min(m_settings.nCells.y, (int)(center.y + radius) + 1); y++)
-	//{
-	//	for (int x = std::max(0, (int)(center.x - radius)); x < std::min(m_settings.nCells.x, (int)(center.x + radius) + 1); x++)
-	//	{
-	//		for (Particle* p : grid[pos2idx(Vec2i( x, y ))])
-	//		{
-	//			if (euclideanDistance(p->position, center) <= radius)
-	//			{
-	//				neighbours.push_back(p);
-	//			}
-	//		}
-	//	}
-	//}
-	return neighbours;
 }
 
-Vec2i Grid::discretizedPosition(Vec2d v) {
+
+//std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius) const
+//{
+//	//TODO implement as iterator
+//
+//	std::vector<Particle*> neighbours;
+//	//made x inner loop, so we traverse particle collection in the correct order
+//	//for (int i = 0; i < grid.size(); i++)
+//	//{
+//	//	for (Particle* p : grid[i])
+//	//	{
+//	//		if (euclideanDistance(p->position, center) <= radius)
+//	//		{
+//	//			neighbours.push_back(p);
+//	//		}
+//	//	}
+//	//}
+//
+//	Vec2i min = discretizedPosition(center - Vec2d(radius, radius));
+//	Vec2i max = discretizedPosition(center + Vec2d(radius, radius));
+//
+//	for (int y = min.y; y <= max.y; y++)
+//	{
+//		for (int x = min.x; x <= max.x; x++)
+//		{
+//			for (Particle* p : grid[pos2idx(Vec2i(x, y))])
+//			{
+//				if (euclideanDistance(p->position, center) <= radius)
+//				{
+//					neighbours.push_back(p);
+//				}
+//			}
+//		}
+//	}
+//
+//	return neighbours;
+//}
+
+
+Vec2i Grid::discretizedPosition(Vec2d v) const
+{
 	Vec2i discretePos;
 	discretePos.x = floor(v.x / m_meshWidth.x);
 	discretePos.y = floor(v.y / m_meshWidth.y);
@@ -101,7 +108,7 @@ Vec2i Grid::discretizedPosition(Vec2d v) {
 }
 
 //! map 2-dimensional index-vector into a unique, seamless scalar index
-int Grid::pos2idx(Vec2i pos)
+int Grid::pos2idx(Vec2i pos) const
 {
 	return pos.x + m_settings.nCells.x * pos.y;
 }

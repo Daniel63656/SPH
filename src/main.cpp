@@ -6,7 +6,7 @@
 #include "kernelFunctions/gaussian.h"
 //#include "output_writer/vtk_writer.h"
 #include "output_writer/outputwriter.h"
-
+#include "utils/profiler.h"
 
 int main(int argc, char* argv[])
 {
@@ -33,11 +33,16 @@ int main(int argc, char* argv[])
 
     OutputWriter writer(info, settings.vs_dt, "out/");
 
-
     Simulation simulation(settings, &kernel, info);
 //    VtkWriter vtkWriter(simulation.getGrid());
+	double taiming = 0.0;
+	{
+		ProfilerScoped p(taiming);
+		simulation.run(writer);
+	}
+	auto NsToMs = [&](double ms) { return ms * 1e-6; };
 
-    simulation.run(writer);
+	std::cout << "time -> " << NsToMs(taiming) << std::endl;
 
     writer.write_pvd("sim");
 
