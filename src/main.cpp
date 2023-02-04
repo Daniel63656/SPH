@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	settings.loadFromFile(filename);
 	settings.printSettings();
 
-	CubicSpline kernel(settings.smoothness);
+	Gaussian kernel(settings.smoothness);
 
     MPI_Vars info{0,1,0, settings.numberOfParticles, settings.numberOfParticles, 0};
 
