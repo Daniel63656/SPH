@@ -3,24 +3,24 @@
 
 # constants
 kappa = 2.0                     # gas constant
-rho0 = 0.5
-mass = 0.5                       # mass of the individual particle
-mu = 1                          # kinematic viscosity of the fluid
-particleDensity = 3
+rho0 = 1000
+mass = 31.378                       # mass of the individual particle
+mu = 0.05                          # kinematic viscosity of the fluid
+particleDensity = 31.58			#particle distance 0.178
 numberOfParticles = 121        # number of particles used in the simulation
 
 
 # domain
-physicalSizeX = 12.0             # physical size of the domain
-physicalSizeY = 12.0
+physicalSizeX = 5.0             # physical size of the domain
+physicalSizeY = 5.0
 nCellsX = 10                   # number of cells in all spacial directions
 nCellsY = 10
 boundaryDensityX = 20
 boundaryDensityY = 20
-boundaryThickness = 2
+boundaryThickness = 2			
 
 # time
-endTime = 80.0
+endTime = 50.0
 dt = 0.01
 vs_dt = 0.1
 
@@ -28,4 +28,4 @@ vs_dt = 0.1
 gX = 0.0                        # external forces, set to (gX,gY) = (0,-9.81) to account for gravity
 gY = 0.0
 kernelFunction = Gaussian       # specify which kernel function gets used
-smoothness = 0.5                # specify kernels smoothing term
+smoothness = 0.577                # specify kernels smoothing term
