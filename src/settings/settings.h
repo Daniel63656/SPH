@@ -22,7 +22,6 @@ struct Settings
     // domain
     Vec2d physicalSize;         //< dimensions of the domain
     Vec2i nCells{};                //< number of cells in all spacial directions
-    Vec2d boundaryDensity;
     double boundaryThickness;
     //TODO boundary conditions
     
@@ -41,5 +40,5 @@ struct Settings
     void loadFromFile(const std::string& filename);
 
     //! output all settings to console
-    void printSettings();
+    void printSettings() const;
 };

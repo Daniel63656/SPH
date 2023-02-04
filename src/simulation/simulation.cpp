@@ -3,9 +3,9 @@
 #include "datastructures/neighbourhood.h"
 
 Simulation::Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info) :
-	m_kernel{ kernel },
-	m_settings{ settings },
-	m_grid{ settings },
+	m_kernel(kernel),
+	m_settings(settings),
+	m_grid(settings),
 	m_mpi_info(mpi_info)
 {
 	initializeParticles();
@@ -18,7 +18,6 @@ Simulation::Simulation(const Settings& settings, const KernelFunction* kernel, M
 
 void Simulation::initializeParticles()
 {
-	//std::array<int, 2> nParticles = {};
 	double nParticlesX, nParticlesY;
 
 	double b_thickness = m_settings.boundaryThickness;
@@ -43,32 +42,21 @@ void Simulation::initializeParticles()
 
 			if (xPos > b_thickness && xPos < m_settings.physicalSize.x + b_thickness && yPos > b_thickness && yPos < m_settings.physicalSize.y + b_thickness)
 				m_particles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
-			else
-				m_boundaryparticles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
-            if (yPos >= m_settings.physicalSize.y+b_thickness && flag) {
-                m_upperParticle = m_boundaryparticles.size()-1;
-                flag = false;
+			else {
+                if (yPos >= m_settings.physicalSize.y+b_thickness && flag) {
+                    m_upperParticle = m_boundaryparticles.size()-1;
+                    flag = false;
+                }
+                if (flag)
+                    m_boundaryparticles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(0, 0));
+                else
+                    m_boundaryparticles.emplace_back(m_settings.mass, Vec2d(xPos, yPos), Vec2d(1, 0));
             }
 		}
 	}
     std::cout << m_upperParticle << "," << m_boundaryparticles.size() << std::endl;
 
 
-}
-
-
-void Simulation::updateBoundary()
-{
-	const double half_dt = 0.5 * m_settings.dt;
-
-	for (int i = m_upperParticle; i < m_boundaryparticles.size(); i++) {
-		Vec2d& pos = m_boundaryparticles[i].position;
-		pos.x = pos.x + half_dt;
-		if (pos.x > m_settings.physicalSize.x + m_settings.boundaryThickness*2)
-			pos.x = -(pos.x - (m_settings.physicalSize.x + m_settings.boundaryThickness*2));
-
-        m_boundaryparticles[i].velocity.x = 1;
-	}
 }
 
 void Simulation::run(OutputWriter& writer)
@@ -84,12 +72,10 @@ void Simulation::run(OutputWriter& writer)
 	refillGrid();
 	while (time < m_settings.endTime)
 	{
-        updateBoundary();
 		calculateDensityAndPressure();
 		calculateForces();
         leapfrog(firstIteration);
         firstIteration = false;
-        updateBoundary();
 		refillGrid();
 
 		if (time >= next_write) {
@@ -156,19 +142,6 @@ void Simulation::calculateForces()
             p_i.forces +=          -(p_i.pressure*vol_i + p_j->pressure*vol_j) / 2 * m_kernel->   gradW(p_i.position - p_j->position)
                     + m_settings.mu*(p_j->velocity*vol_j - p_i.velocity*vol_i) / 2 * m_kernel->laplaceW(p_i.position - p_j->position);
         }
-
-
-		/*p_i.forces = p_i.density * m_settings.g;
-		for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
-		{
-			double vol_i = p_i.mass / p_i.density;
-			double vol_j = p_j->mass / p_j->density;
-
-			Vec2d pressure = -(1.0 / 2.0) * (p_i.pressure * (p_i.mass / p_i.density) + p_j->pressure * (p_j->mass / p_j->density)) * m_kernel->gradW(p_i.position - p_j->position);
-			Vec2d viscosity = (m_settings.mu / 2.0) * (p_j->velocity * (p_j->mass / p_j->density) - p_i.velocity* (p_i.mass / p_i.density)) * m_kernel->laplaceW(p_i.position - p_j->position);
-
-			p_i.forces += pressure + viscosity;
-		}*/
 	}
 }
 

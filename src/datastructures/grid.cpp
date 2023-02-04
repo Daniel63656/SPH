@@ -77,7 +77,7 @@ std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius)
 	return neighbours;
 }
 
-Vec2i Grid::discretizedPosition(Vec2d v) {
+Vec2i Grid::discretizedPosition(Vec2d v) const {
 	Vec2i discretePos;
 	discretePos.x = floor(v.x / m_meshWidth.x);
 	discretePos.y = floor(v.y / m_meshWidth.y);

@@ -12,10 +12,9 @@ public:
 
 	void write_vtp(std::vector<Particle>& particles);
 
-	void write_pvd(std::string filename);
+	void write_pvd(const std::string& filename);
 	void build_tree();
 
-	int steps;
 private:
 	void create_dirs();
 	pugi::xml_document m_doc;
@@ -30,7 +29,6 @@ private:
 
 	int m_step;
 	double m_vs_dt;
-	double m_endtime;
 
     MPI_Vars& m_mpi_info;
 	std::string m_dir;

@@ -75,10 +75,6 @@ void Settings::loadFromFile(const std::string& filename)
 				nCells.x = atoi(paramValue.c_str());
 			else if (paramName == "nCellsY")
 				nCells.y = atoi(paramValue.c_str());
-            else if (paramName == "boundaryDensityX")
-                boundaryDensity.x = atof(paramValue.c_str());
-            else if (paramName == "boundaryDensityY")
-                boundaryDensity.y = atof(paramValue.c_str());
             else if (paramName == "boundaryThickness")
                 boundaryThickness = atof(paramValue.c_str());
 
@@ -106,12 +102,11 @@ void Settings::loadFromFile(const std::string& filename)
 	}
 }
 
-void Settings::printSettings() {
+void Settings::printSettings() const {
 	std::cout << "Settings: " << std::endl
 		<< "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << numberOfParticles << std::endl
 		<< "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
 		<< "cells: " << nCells.x << " x " << nCells.y << std::endl
-        << "boundaryDensity: " << boundaryDensity.x << "," << boundaryDensity.y << std::endl
 		<< "time: " << endTime << " in " << dt << " steps\n"
 		<< "g: (" << g.x << "," << g.y << "), kernel: " << kernelFunction << "(" << smoothness << ")\n";
 }

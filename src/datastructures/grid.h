@@ -28,7 +28,7 @@ private:
     Vec2d m_meshWidth{};      //width of the cells in all spacial directions
     std::vector<std::vector<Particle*>> grid;
 
-    Vec2i discretizedPosition(Vec2d v);
+    Vec2i discretizedPosition(Vec2d v) const;
     int pos2idx(Vec2i pos);
 };
 

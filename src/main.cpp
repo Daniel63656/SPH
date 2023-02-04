@@ -6,6 +6,7 @@
 #include "kernelFunctions/gaussian.h"
 //#include "output_writer/vtk_writer.h"
 #include "output_writer/outputwriter.h"
+#include "kernelFunctions/cubicSpline.h"
 
 
 int main(int argc, char* argv[])
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
 	settings.loadFromFile(filename);
 	settings.printSettings();
 
-	Gaussian kernel(settings.smoothness);
+	CubicSpline kernel(settings.smoothness);
 
     MPI_Vars info{0,1,0, settings.numberOfParticles, settings.numberOfParticles, 0};
 
