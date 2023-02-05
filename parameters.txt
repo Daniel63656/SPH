@@ -6,13 +6,13 @@ kappa = 1230                     # gas constant
 rho0 = 100
 mass = 0.5                       # mass of the individual particle
 mu = 3.5                          # kinematic viscosity of the fluid
-numberOfParticles = 10000
+numberOfParticles = 5000
 
 # domain
 physicalSizeX = 2.0             # physical size of the domain
 physicalSizeY = 2.0
-nCellsX = 1                   # number of cells in all spacial directions
-nCellsY = 1
+nCellsX = 5                   # number of cells in all spacial directions
+nCellsY = 5
 boundaryThickness = 2
 
 Boundary top {
@@ -34,7 +34,7 @@ Boundary right {
 }
 
 # time
-endTime = 50.0
+endTime = 30.0
 dtFixed = false
 dt = 0.005
 vs_dt = 0.1
