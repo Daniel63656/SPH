@@ -12,7 +12,7 @@
 class Simulation
 {
 public:
-    Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info);
+    Simulation(Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info);
 
     void initializeParticles();
 
@@ -27,7 +27,7 @@ public:
     Grid& getGrid();
 
 private:
-    const Settings& m_settings;
+    Settings& m_settings;
     const KernelFunction* m_kernel;
 
     Grid m_grid;

@@ -75,7 +75,7 @@ void OutputWriter::build_tree()
 	m_forces.append_attribute("format") = "ascii";
 
 
-	/*// angle
+	// angle
 	m_mass = pointdata.append_child("DataArray");
 	m_mass.append_attribute("type") = "Float64";
 	m_mass.append_attribute("Name") = "mass";
@@ -96,7 +96,7 @@ void OutputWriter::build_tree()
 	m_pressure.append_attribute("type") = "Float64";
 	m_pressure.append_attribute("Name") = "pressure";
 	m_pressure.append_attribute("NumberOfComponents") = "1";
-	m_pressure.append_attribute("format") = "ascii";*/
+	m_pressure.append_attribute("format") = "ascii";
 
 
 	//
@@ -156,9 +156,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
 	m_forces.text() = force.c_str();
-	//m_mass.text() = mass.c_str();
-	//m_rho.text() = rho.c_str();
-	//m_pressure.text() = pressure.c_str();
+	m_mass.text() = mass.c_str();
+	m_rho.text() = rho.c_str();
+	m_pressure.text() = pressure.c_str();
 
 
 	//m_kin_e.text() = m_glob.kin_e;

@@ -5,7 +5,7 @@
 Gaussian::Gaussian(double smoothing) : KernelFunction(smoothing)
 {
     //1d    alpha = 1/(sqrt(M_PI)*h);
-    alpha = 1.0/(2.0*M_PI*h*h);
+    alpha = 1.0/(M_PI*h*h);
     //3d    alpha = 1/(sqrt(pow(M_PI, 3))*pow(h, 3));
 }
 

@@ -2,7 +2,7 @@
 #include "simulation.h"
 #include "datastructures/neighbourhood.h"
 
-Simulation::Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info) :
+Simulation::Simulation(Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info) :
 	m_kernel{ kernel },
 	m_settings{ settings },
 	m_grid{ settings },
@@ -26,10 +26,13 @@ void Simulation::initializeParticles()
 	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
 	double boundary_area = (m_settings.physicalSize.x + 2 * b_thickness) * (m_settings.physicalSize.y + 2 * b_thickness);
 
-	int numberOfParticles = (int)(m_settings.particleDensity * boundary_area);
-	std::cout << "# of particles: " << numberOfParticles << std::endl;
-	nParticlesX = (int)std::lround(m_settings.physicalSize.x * sqrt(numberOfParticles / area));
-	nParticlesY = numberOfParticles / nParticlesX;
+	//int numberOfParticles = (int)(m_settings.particleDensity * boundary_area);
+    int allParticles = m_settings.numberOfParticles/area*boundary_area;
+    
+    m_settings.mass = (m_settings.rho_0 * area) / m_settings.numberOfParticles;
+    
+	nParticlesX = (int)std::lround((m_settings.physicalSize.x+2*b_thickness) * sqrt(allParticles / boundary_area));
+	nParticlesY = allParticles / nParticlesX;
 
 	Vec2d spacing{ (m_settings.physicalSize.x + 2 * b_thickness) / nParticlesX, (m_settings.physicalSize.y + 2 * b_thickness) / nParticlesY };
     bool flag = true;
