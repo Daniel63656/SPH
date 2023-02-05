@@ -141,7 +141,7 @@ void Settings::calculateSettings()
     double area = physicalSize.x * physicalSize.y;
     mass = rho_0 * area / nParticles;
 
-    smoothness = sqrt((area * 20)/(M_PI * nParticles));
+    smoothness = sqrt((area * 20)/(M_PI * nParticles))/3;
 
     std::cout << mass << "mass" << std::endl;
 

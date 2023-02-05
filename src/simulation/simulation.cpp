@@ -69,8 +69,8 @@ void Simulation::initializeBoundaries()
 
 
 
-
-    /*//bottom
+/*
+    //bottom
     double particleDensity = m_settings.physicalSize.x/(m_settings.bottom.m_nParticlesPerRow - 1);
     for (int t = 0; t < m_settings.bottom.m_thickness; t++) {
         for (int i = 0; i < m_settings.bottom.m_nParticlesPerRow; i++) {
