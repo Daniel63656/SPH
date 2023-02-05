@@ -23,7 +23,6 @@
 
 // openmp
 //#include <omp.h>
-
 #include "pugixml.hpp"
 
 // fmt

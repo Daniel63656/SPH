@@ -1,5 +1,5 @@
 #pragma once
-#include <chrono>
+#include "pch.h"
 
 // Measures time spent inside a scope
 class ProfilerScoped

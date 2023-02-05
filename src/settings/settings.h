@@ -1,7 +1,6 @@
 #pragma once
 
-#include <array>
-#include <string>
+#include "pch.h"
 #include "../datastructures/vector.h"
 
 /*
@@ -22,10 +21,15 @@ inline std::ostream& operator<< (std::ostream& os, const Boundary& boundary) {
               << boundary.m_particleMass << ", velocity=" << boundary.m_velocity << "}";
 }
 
+enum KernelType
+{
+    GAUSSIAN,
+    CUBIC
+};
 
 struct Settings
 {
-    explicit Settings(const std::string& filename);
+    Settings(const std::string& filename);
     // constants
     double kappa = 4;                           //< gas constant
     double rho_0 = 3;                           //< rest density at zero pressure
@@ -34,8 +38,8 @@ struct Settings
     int nParticles = 100;
 
     // domain
-    Vec2d physicalSize;                         //< dimensions of the domain
-    Vec2i nCells{};                             //< number of cells in all spacial directions
+    Vec2d physicalSize;                             //< dimensions of the domain
+    Vec2i nCells{};                                 //< number of cells in all spacial directions
     double boundaryThickness;
     Boundary bottom = Boundary(10, mass);
     Boundary    top = Boundary(10, mass);
@@ -45,13 +49,13 @@ struct Settings
     // time
     double endTime = 10;
     double dt = 0.1;
+    bool dtFixed = true;
     double vs_dt = 1;
 
     //miscellaneous
-    Vec2d g;                          //< external forces
-    std::string kernelFunction = "GAUSSIAN";
+    Vec2d g;                                        //< external forces
+    KernelType kernelFunction = GAUSSIAN;
     double smoothness;
-
 
     void calculateSettings();
 

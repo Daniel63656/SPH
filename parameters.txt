@@ -2,16 +2,15 @@
 # Run ./numsim lid_driven_cavity.txt
 
 # constants
-kappa = 1250                     # gas constant
+kappa = 1230                     # gas constant
 rho0 = 100
 mass = 0.5                       # mass of the individual particle
 mu = 3.5                          # kinematic viscosity of the fluid
-numberOfParticles = 200
-
+numberOfParticles = 10000
 
 # domain
-physicalSizeX = 12.0             # physical size of the domain
-physicalSizeY = 12.0
+physicalSizeX = 2.0             # physical size of the domain
+physicalSizeY = 2.0
 nCellsX = 1                   # number of cells in all spacial directions
 nCellsY = 1
 boundaryThickness = 2
@@ -35,8 +34,9 @@ Boundary right {
 }
 
 # time
-endTime = 10.0
-dt = 0.01
+endTime = 50.0
+dtFixed = false
+dt = 0.005
 vs_dt = 0.1
 
 # misc

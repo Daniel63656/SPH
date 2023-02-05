@@ -197,8 +197,10 @@ void Simulation::calculateForces()
 
 void Simulation::leapfrog(bool firstIteration) {
     const double dt_velocity = (0.5 + 0.5*(!firstIteration)) * m_settings.dt;
-    for (auto& p : m_particles)
+#pragma omp parallel for
+    for (int i = 0; i < m_particles.size(); i++)
     {
+        auto& p = m_particles[i];
         p.velocityAtHalfDt += dt_velocity * p.forces / p.density;
         p.position += m_settings.dt * p.velocityAtHalfDt;
         p.velocity = p.velocityAtHalfDt + m_settings.dt/2 * p.forces / p.density;

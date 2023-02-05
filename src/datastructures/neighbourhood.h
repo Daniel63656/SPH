@@ -52,10 +52,6 @@ public:
 		int index_inner;
 		int index_outer;
 
-		//size_t index_lowerbound_x;
-		//size_t index_upperbound_x;
-		//size_t index_lowerbound_y;
-		//size_t index_upperbound_y;
 		Vec2i min;
 		Vec2i max;
 		int end_index;
@@ -71,7 +67,6 @@ public:
 
 	Iterator begin()
 	{
-
 		int min = m_grid->pos2idx( m_grid->discretizedPosition(m_center - Vec2d(m_radius)));
 		Iterator it(this, min, 0);
 		if (!getGrid()[min].empty() && euclideanDistance(getCenter(), (getGrid())[min][0]->position) <= getRadius())
@@ -83,18 +78,13 @@ public:
 			it.findNextElement();
 			return it;
 		}
-
 	}
 
 	Iterator end()
 	{
 		Vec2i min = m_grid->discretizedPosition(m_center - Vec2d(m_radius));
 		Vec2i max = m_grid->discretizedPosition(m_center + Vec2d(m_radius));
-
-		//int max = m_grid->pos2idx(m_grid->discretizedPosition(m_center + Vec2d(m_radius)));
 		int end = m_grid->pos2idx(Vec2i(min.x, max.y + 1));
-
-		//std::cout << "(end iterator) " << end << ", " << 0 << std::endl;
 
 		return Iterator(this, end, 0);
 	}

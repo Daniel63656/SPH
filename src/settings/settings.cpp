@@ -115,6 +115,8 @@ Settings::Settings(const std::string& filename)
 
         else if (paramName == "endTime")
             endTime = atof(paramValue.c_str());
+        else if (paramName == "dtFixed")
+            dtFixed = (paramValue == "true") ? true : false;
         else if (paramName == "dt")
             dt = atof(paramValue.c_str());
         else if (paramName == "vs_dt")
@@ -125,7 +127,7 @@ Settings::Settings(const std::string& filename)
         else if (paramName == "gY")
             g.y = atof(paramValue.c_str());
         else if (paramName == "kernelFunction")
-            kernelFunction = paramValue;
+            kernelFunction = GAUSSIAN;
         else if (paramName == "smoothness")
             smoothness = atof(paramValue.c_str());
 
@@ -146,6 +148,11 @@ void Settings::calculateSettings()
     std::cout << mass << "mass" << std::endl;
 
 
+    if (!dtFixed)
+    {
+        const double safety = 0.2;
+        dt = ((smoothness) / 1.0) * safety;
+    }
 
     Vec2i vParticles;
     vParticles.x = (int)std::lround(physicalSize.x * sqrt(nParticles / area));
@@ -188,6 +195,7 @@ void Settings::printSettings() const {
         << "Left   boundary: " << left << "\n"
         << "Right  boundary: " << right << "\n"
 		<< "endTime: " << endTime << " in " << dt << " steps\n"
+		<< "dt fixed?: " << dtFixed << "\n"
         << "Gravity: " << g <<"\n"
 		<< "Kernel: " << kernelFunction << "(" << smoothness << ")\n"
         << "=============================\n\n";

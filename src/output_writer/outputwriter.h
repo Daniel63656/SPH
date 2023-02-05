@@ -2,8 +2,7 @@
 
 #include "../datastructures/particle.h"
 #include "../output_writer/body.h"
-#include <vector>
-#include <pugixml.hpp>
+#include "pch.h"
 
 class OutputWriter
 {

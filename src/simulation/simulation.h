@@ -6,8 +6,6 @@
 #include "../settings/settings.h"
 #include "../kernelFunctions/gaussian.h"
 #include "../output_writer/outputwriter.h"
-//#include "../output_writer/vtk_writer.h"
-
 
 class Simulation
 {
