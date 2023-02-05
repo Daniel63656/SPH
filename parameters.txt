@@ -2,11 +2,11 @@
 # Run ./numsim lid_driven_cavity.txt
 
 # constants
-kappa = 2.0                     # gas constant
-rho0 = 0.5
+kappa = 1250                     # gas constant
+rho0 = 100
 mass = 0.5                       # mass of the individual particle
-mu = 1                          # kinematic viscosity of the fluid
-numberOfParticles = 400
+mu = 3.5                          # kinematic viscosity of the fluid
+numberOfParticles = 200
 
 
 # domain
@@ -37,7 +37,7 @@ Boundary right {
 # time
 endTime = 10.0
 dt = 0.01
-vs_dt = 0.2
+vs_dt = 0.1
 
 # misc
 gX = 0.0                        # external forces, set to (gX,gY) = (0,-9.81) to account for gravity

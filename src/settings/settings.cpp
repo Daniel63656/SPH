@@ -1,5 +1,6 @@
 #include <fstream>
 #include <cassert>
+#include "pch.h"
 #include "settings.h"
 
 Settings::Settings(const std::string& filename)
@@ -133,6 +134,49 @@ Settings::Settings(const std::string& filename)
         }
 	}
 }
+
+
+void Settings::calculateSettings()
+{
+    double area = physicalSize.x * physicalSize.y;
+    mass = rho_0 * area / nParticles;
+
+    smoothness = sqrt((area * 20)/(M_PI * nParticles));
+
+    std::cout << mass << "mass" << std::endl;
+
+
+
+    Vec2i vParticles;
+    vParticles.x = (int)std::lround(physicalSize.x * sqrt(nParticles / area));
+    vParticles.y = nParticles / vParticles.x;
+    Vec2d spacing(physicalSize.x/(vParticles.x+1), physicalSize.y/(vParticles.y+1));
+
+
+   /* 
+    bottom = Boundary(vParticles.y, mass);
+    top    = Boundary(vParticles.y, mass);
+    left   = Boundary(vParticles.x, mass);
+    right  = Boundary(vParticles.x, mass);*/
+
+    bottom.m_nParticlesPerRow = vParticles.y;
+    top.m_nParticlesPerRow = vParticles.y;
+    left.m_nParticlesPerRow = vParticles.x;
+    right.m_nParticlesPerRow = vParticles.x;
+
+    bottom.m_particleMass = mass;
+    top.m_particleMass = mass;
+    left.m_particleMass = mass;
+    right.m_particleMass = mass;
+/*
+    bottom.m_thickness = 3;
+    top.m_thickness = 3;
+    left.m_thickness = 3;
+    right.m_thickness = 3;*/
+
+}
+
+
 
 void Settings::printSettings() const {
 	std::cout << "========= Settings ==========\n"

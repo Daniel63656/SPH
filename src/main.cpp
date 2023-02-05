@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
 
 	// instantiate settings object
 	Settings settings(filename);
+    settings.calculateSettings();
 	settings.printSettings();
 
 	// tell omp to use as many threads as there are cores so it doesnt use hyperthreading

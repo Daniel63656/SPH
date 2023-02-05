@@ -52,6 +52,9 @@ struct Settings
     std::string kernelFunction = "GAUSSIAN";
     double smoothness;
 
+
+    void calculateSettings();
+
     //! output all settings to console
     void printSettings() const;
 
