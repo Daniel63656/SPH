@@ -14,16 +14,12 @@ OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt,  std::string path):
 
 void OutputWriter::create_dirs()
 {
-	if (!std::filesystem::create_directories(m_dir))
-	{
-		std::cout << "Could not create directories!" << std::endl;
-	}
+    if (system("mkdir -p out") != 0)
+        std::cout << "Could not create output directory" << std::endl;
 }
 
 void OutputWriter::build_tree()
 {
-
-    std::cout << "particle size:    " << m_mpi_info.arrayend << std::endl;
 	pugi::xml_node vtkfile = m_doc.append_child("VTKFile");
 	vtkfile.append_attribute("type") = "PolyData";
 	vtkfile.append_attribute("version") = "0.1";

@@ -18,9 +18,9 @@ public:
     void clear();
     void add(Particle* p);
 
-//    Neighbourhood neighbours(const Vec2d& center, double radius);
+    Neighbourhood neighbours(const Vec2d& center, double radius);
 
-    std::vector<Particle*> neighbours(const Vec2d& center, double radius);
+    //std::vector<Particle*> neighbours(const Vec2d& center, double radius) const;
 private:
     const Settings& m_settings;
 
@@ -29,6 +29,6 @@ private:
     std::vector<std::vector<Particle*>> grid;
 
     Vec2i discretizedPosition(Vec2d v) const;
-    int pos2idx(Vec2i pos);
+    int pos2idx(Vec2i pos) const;
 };
 

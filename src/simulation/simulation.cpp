@@ -114,10 +114,10 @@ void Simulation::calcDensityPresure(Particle& particle)
 	double rho = 0;
 	bool hasNeighbours = false;
 
-	for (const auto neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
+	for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 	{
 		hasNeighbours = true;
-		rho += neighbour_particle->mass * m_kernel->W(particle.position - neighbour_particle->position);
+		rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
 	}
 
 	assert(hasNeighbours);
@@ -127,30 +127,35 @@ void Simulation::calcDensityPresure(Particle& particle)
 
 void Simulation::calculateDensityAndPressure() {
 
-	for (Particle& particle : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
-		calcDensityPresure(particle);
+		auto& p = m_particles[i];
+		calcDensityPresure(p);
 	}
 
-	for (Particle& particle : m_boundaryparticles)
+#pragma omp parallel for
+	for (int i = 0; i < m_boundaryparticles.size(); i++)
 	{
-		calcDensityPresure(particle);
+		auto& p = m_boundaryparticles[i];
+		calcDensityPresure(p);
 	}
 }
 
 
 void Simulation::calculateForces()
 {
-	for (auto& p_i : m_particles)
+#pragma omp parallel for
+	for (int i = 0; i < m_particles.size(); i++)
 	{
-        p_i.forces = p_i.density*m_settings.g;
-        for (const auto p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
-        {
-            double vol_i = p_i.mass / p_i.density;
-            double vol_j = p_j->mass / p_j->density;
-
-            p_i.forces +=          -(p_i.pressure*vol_i + p_j->pressure*vol_j) / 2 * m_kernel->   gradW(p_i.position - p_j->position)
-                    + m_settings.mu*(p_j->velocity*vol_j - p_i.velocity*vol_i) / 2 * m_kernel->laplaceW(p_i.position - p_j->position);
+		auto& p_i = m_particles[i];
+		p_i.forces = p_i.density * m_settings.g;
+		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
+		{
+			double vol_i = p_i.mass / p_i.density;
+			double vol_j = p_j.mass / p_j.density;
+            p_i.forces +=          -(p_i.pressure*vol_i + p_j.pressure*vol_j) / 2 * m_kernel->   gradW(p_i.position - p_j.position)
+                    + m_settings.mu*(p_j.velocity*vol_j - p_i.velocity*vol_i) / 2 * m_kernel->laplaceW(p_i.position - p_j.position);
         }
 	}
 }
