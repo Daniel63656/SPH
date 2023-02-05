@@ -16,7 +16,8 @@ public:
 	void build_tree();
 
 private:
-	static void create_dirs();
+	void create_dirs();
+
 	pugi::xml_document m_doc;
 	pugi::xml_node m_position;
 	pugi::xml_node m_velocity;
