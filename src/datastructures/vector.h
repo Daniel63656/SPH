@@ -278,7 +278,7 @@ double euclideanDistance(const Vec2<T>& v1, const Vec2<T>& v2)
 //! print on console
 template<typename T> std::ostream& operator<<(std::ostream& os, const Vec2<T>& v)
 {
-	return os << "[" << v.x << v.y << "]";
+	return os << "[" << v.x << ", " << v.y << "]";
 }
 
 

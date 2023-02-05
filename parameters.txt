@@ -6,8 +6,7 @@ kappa = 2.0                     # gas constant
 rho0 = 0.5
 mass = 0.5                       # mass of the individual particle
 mu = 1                          # kinematic viscosity of the fluid
-particleDensity = 3
-numberOfParticles = 121        # number of particles used in the simulation
+numberOfParticles = 400
 
 
 # domain
@@ -15,9 +14,25 @@ physicalSizeX = 12.0             # physical size of the domain
 physicalSizeY = 12.0
 nCellsX = 1                   # number of cells in all spacial directions
 nCellsY = 1
-boundaryDensityX = 20
-boundaryDensityY = 20
 boundaryThickness = 2
+
+Boundary top {
+    nParticlesPerRow = 20;
+    thickness = 3;
+    velocityX = 1;
+}
+Boundary bottom {
+    nParticlesPerRow = 20;
+    thickness = 3;
+}
+Boundary left {
+    nParticlesPerRow = 20;
+    thickness = 3;
+}
+Boundary right {
+    nParticlesPerRow = 20;
+    thickness = 3;
+}
 
 # time
 endTime = 10.0

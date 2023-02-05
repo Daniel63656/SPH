@@ -14,12 +14,6 @@ class Simulation
 public:
     Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info);
 
-    void initializeParticles();
-
-    void initializeBoundary();
-
-    void updateBoundary();
-
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
     void run(OutputWriter& writer);
@@ -33,14 +27,13 @@ private:
     Grid m_grid;
     std::vector<Particle> m_particles;
     std::vector<Particle> m_boundaryparticles;
-    int m_upperParticle;
+    MPI_Vars& m_mpi_info;
+
+    void initializeParticles();
+    void initializeBoundaries();
     void calcDensityPresure(Particle& particle);
     void calculateDensityAndPressure();
     void calculateForces();
-    //void updateParticles();
-    MPI_Vars& m_mpi_info;
-
     void leapfrog(bool firstIteration);
-
     void refillGrid();
 };

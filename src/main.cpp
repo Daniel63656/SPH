@@ -24,13 +24,12 @@ int main(int argc, char* argv[])
 	std::cout << "Parameters imported from: \"" << filename << "\"" << std::endl;
 
 	// instantiate settings object
-	Settings settings;
-	settings.loadFromFile(filename);
+	Settings settings(filename);
 	settings.printSettings();
 
 	Gaussian kernel(settings.smoothness);
 
-    MPI_Vars info{0,1,0, settings.numberOfParticles, settings.numberOfParticles, 0};
+    MPI_Vars info{0, 1, 0, settings.nParticles, settings.nParticles, 0};
 
     OutputWriter writer(info, settings.vs_dt, "out/");
 
