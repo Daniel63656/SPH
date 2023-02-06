@@ -2,33 +2,35 @@
 # Run ./numsim lid_driven_cavity.txt
 
 # specify the scenario that is run
-scenario = LidDrivenCavity
+scenario = KarmanVortex
 
 # constants
 kappa = 1230                    # gas constant
 rho0 = 100
 mass = auto                     # mass of the individual particle. Using [auto] assigns a reasonable parameter based on other simulation parameters
 mu = 3.5                        # kinematic viscosity of the fluid
-numberOfParticles = 500
+numberOfParticles = 5000
 
 # domain
-physicalSizeX = 2.0            # physical size of the domain
+physicalSizeX = 10.0           # physical size of the domain
 physicalSizeY = 2.0
-nCellsX = 25                    # number of cells in all spacial directions
+nCellsX = 5                    # number of cells in all spacial directions
 nCellsY = 5
 
 Boundary top {
     thickness = 3;
+    velocityX = 1;
 }
 Boundary bottom {
     thickness = 3;
+    velocityX = 1;
 }
 Boundary left {
     thickness = 3;
     velocityX = 1;
 }
 Boundary right {
-    thickness = 3;
+    thickness = 0;
 }
 
 # time
