@@ -9,7 +9,6 @@
 OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(std::move(path))
 {
 	create_dirs();
-	//build_tree();
 	m_step = 0;
 	m_path = m_dir + std::string("time_series/") + std::string("sim_");
 }

@@ -22,6 +22,7 @@ public:
     Grid& getGrid();
 
 private:
+    double time;
     const Settings& m_settings;
     std::shared_ptr<KernelFunction> m_kernel;
 
@@ -33,6 +34,7 @@ private:
     virtual void initialize();
     virtual void calculateDensityAndPressure();
     virtual void calculateForces();
+    virtual void update() {};
 
     void calculateDensityAndPressure(Particle& particle);
     void leapfrog(bool firstIteration);

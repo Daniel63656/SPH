@@ -9,9 +9,7 @@ Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction>
 	m_settings(settings),
 	m_grid(settings),
 	m_mpi_info(mpi_info)
-{
-	m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
-}
+    {}
 
 
 void Simulation::initialize() {
@@ -22,12 +20,15 @@ void Simulation::initialize() {
 void Simulation::run(OutputWriter& writer)
 {
     initialize();
-	writer.build_tree();
+    m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
+    writer.build_tree();
+
+    //output initial state
 	auto out = m_particles;
 	out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
 	writer.write_vtp(out);
 
-	double time = 0;
+	time = 0;
 	double next_write = m_settings.vs_dt;
     bool firstIteration = true;
 	refillGrid();
@@ -37,9 +38,12 @@ void Simulation::run(OutputWriter& writer)
 		calculateForces();
         leapfrog(firstIteration);
         firstIteration = false;
+        update();
 		refillGrid();
 
 		if (time >= next_write) {
+           /* m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
+            writer.build_tree();*/
 			auto out = m_particles;
 			out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
 			writer.write_vtp(out);
