@@ -6,8 +6,6 @@
 #include "../settings/settings.h"
 #include "../kernelFunctions/gaussian.h"
 #include "../output_writer/outputwriter.h"
-#include "scenario/scenario.h"
-#include "scenario/scenario_fillingbucket.h"
 class Simulation
 {
 public:
@@ -15,7 +13,7 @@ public:
     friend class KarmanVortex;
     friend class FillingBucket;
 
-    Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, std::shared_ptr<Scenario> scenario, MPI_Vars& mpi_info);
+    Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, MPI_Vars& mpi_info);
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
@@ -32,11 +30,14 @@ private:
     std::vector<Particle> m_boundaryParticles;
     MPI_Vars& m_mpi_info;
 
-    std::shared_ptr<Scenario> m_scenario;
+    virtual void initialize();
+    virtual void calculateDensityAndPressure();
+    virtual void calculateForces();
 
-    void calcDensityPresure(Particle& particle);
-    void calculateDensityAndPressure();
-    void calculateForces();
+    void calculateDensityAndPressure(Particle& particle);
     void leapfrog(bool firstIteration);
     void refillGrid();
+
+    void initializeParticles();
+    void initializeBoundaries();
 };

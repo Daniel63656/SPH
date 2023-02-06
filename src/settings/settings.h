@@ -2,7 +2,6 @@
 
 #include "pch.h"
 #include "../datastructures/vector.h"
-#include "scenario/scenario.h"
 
 /*
  * All settings that parametrize a simulation run.
@@ -24,8 +23,7 @@ inline std::ostream& operator<< (std::ostream& os, const Boundary& boundary) {
 
 enum KernelType
 {
-    GAUSSIAN,
-    CUBIC_SPLINE
+    GAUSSIAN, CUBIC_SPLINE
 };
 inline std::ostream& operator<< (std::ostream& os, const KernelType& kt) {
     switch(kt) {
@@ -37,11 +35,24 @@ inline std::ostream& operator<< (std::ostream& os, const KernelType& kt) {
     return os;
 }
 
+enum Scenario
+{
+    LID_DRIVEN_CAVITY, KARMAN_VORTEX
+};
+inline std::ostream& operator<< (std::ostream& os, const Scenario& s) {
+    switch(s) {
+        case LID_DRIVEN_CAVITY:
+            return os << "Lid driven cavity";
+        case KARMAN_VORTEX:
+            return os << "Karman vortex";
+    }
+    return os;
+}
+
 struct Settings
 {
     explicit Settings(const std::string& filename);
-    //scenario to use
-    std::shared_ptr<Scenario> scenario;
+    Scenario scenario;                              //< scenario to simulate
 
     // constants
     double kappa;                                   //< gas constant

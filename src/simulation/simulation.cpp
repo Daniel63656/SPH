@@ -4,19 +4,24 @@
 #include "datastructures/neighbourhood.h"
 #include "scenario/scenario_liddrivencavity.h"
 
-Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, std::shared_ptr<Scenario> scenario, MPI_Vars& mpi_info) :
+Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, MPI_Vars& mpi_info) :
 	m_kernel(std::move(kernel)),
-    m_scenario(std::move(scenario)),
 	m_settings(settings),
 	m_grid(settings),
 	m_mpi_info(mpi_info)
 {
-    m_scenario->init(this);
 	m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
+}
+
+
+void Simulation::initialize() {
+    initializeParticles();
+    initializeBoundaries();
 }
 
 void Simulation::run(OutputWriter& writer)
 {
+    initialize();
 	writer.build_tree();
 	auto out = m_particles;
 	out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
@@ -32,7 +37,6 @@ void Simulation::run(OutputWriter& writer)
 		calculateForces();
         leapfrog(firstIteration);
         firstIteration = false;
-		m_scenario->update(this);
 		refillGrid();
 
 		if (time >= next_write) {
@@ -45,9 +49,6 @@ void Simulation::run(OutputWriter& writer)
 
 		time += m_settings.dt;
 		std::cout << "timestep t=" << time << "\n";
-
-		//if (time > 0.02)
-		//    break;
 	}
 }
 
@@ -56,7 +57,7 @@ Grid& Simulation::getGrid() {
 	return m_grid;
 }
 
-void Simulation::calcDensityPresure(Particle& particle)
+void Simulation::calculateDensityAndPressure(Particle& particle)
 {
 	double rho = 0;
 	bool hasNeighbours = false;
@@ -72,20 +73,20 @@ void Simulation::calcDensityPresure(Particle& particle)
 	particle.pressure = m_settings.kappa * (pow(rho / m_settings.rho_0, 7) - 1);
 }
 
-void Simulation::calculateDensityAndPressure() {
-
+void Simulation::calculateDensityAndPressure()
+{
 #pragma omp parallel for
 	for (int i = 0; i < m_particles.size(); i++)
 	{
 		auto& p = m_particles[i];
-		calcDensityPresure(p);
+        calculateDensityAndPressure(p);
 	}
 
 #pragma omp parallel for
 	for (int i = 0; i < m_boundaryParticles.size(); i++)
 	{
 		auto& p = m_boundaryParticles[i];
-		calcDensityPresure(p);
+        calculateDensityAndPressure(p);
 	}
 }
 
@@ -131,4 +132,50 @@ void Simulation::refillGrid()
 	{
 		m_grid.add(&p);
 	}
+}
+
+void Simulation::initializeParticles()
+{
+    Vec2i nParticles;
+    double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
+    nParticles.x = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.nParticles / area));
+    nParticles.y = m_settings.nParticles / nParticles.x;
+    Vec2d spacing(m_settings.physicalSize.x / (nParticles.x + 1), m_settings.physicalSize.y / (nParticles.y + 1));
+
+    for (int y = 0; y < nParticles.y; y++)
+    {
+        for (int x = 0; x < nParticles.x; x++)
+        {
+            m_particles.emplace_back(m_settings.mass, Vec2d((x + 1) * spacing.x, (y + 1) * spacing.y), Vec2d(0, 0));
+        }
+    }
+}
+
+void Simulation::initializeBoundaries()
+{
+    Vec2i nParticles;
+    double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
+    nParticles.x = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.nParticles / area));
+    nParticles.y = m_settings.nParticles / nParticles.x;
+    Vec2d spacing(m_settings.physicalSize.x / (nParticles.x + 1), m_settings.physicalSize.y / (nParticles.y + 1));
+
+    //bottom
+    for (int t = 0; t < m_settings.bottom.m_thickness; t++)
+        for (int i = 1; i <= nParticles.x; i++)
+            m_boundaryParticles.emplace_back(m_settings.bottom.m_particleMass, Vec2d(spacing.x * i, -spacing.y * t), Vec2d(m_settings.bottom.m_velocity.x, m_settings.bottom.m_velocity.y));
+
+    //top
+    for (int t = 0; t < m_settings.top.m_thickness; t++)
+        for (int i = 1; i <= nParticles.x; i++)
+            m_boundaryParticles.emplace_back(m_settings.top.m_particleMass, Vec2d(spacing.x * i, spacing.y * t + m_settings.physicalSize.y), Vec2d(m_settings.top.m_velocity.x, m_settings.top.m_velocity.y));
+
+    //left
+    for (int t = 0; t < m_settings.left.m_thickness; t++)
+        for (int i = 1 - m_settings.left.m_thickness; i <= nParticles.y + m_settings.top.m_thickness; i++)
+            m_boundaryParticles.emplace_back(m_settings.left.m_particleMass, Vec2d(-spacing.x * t, spacing.y * i), Vec2d(m_settings.left.m_velocity.x, m_settings.left.m_velocity.y));
+
+    //right
+    for (int t = 0; t < m_settings.right.m_thickness; t++)
+        for (int i = 1 - m_settings.right.m_thickness; i <= nParticles.y + m_settings.top.m_thickness; i++)
+            m_boundaryParticles.emplace_back(m_settings.right.m_particleMass, Vec2d(spacing.x * t + m_settings.physicalSize.x, spacing.y * i), Vec2d(m_settings.right.m_velocity.x, m_settings.right.m_velocity.y));
 }

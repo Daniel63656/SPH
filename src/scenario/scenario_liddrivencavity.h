@@ -1,15 +1,9 @@
 #pragma once
 
-#include "scenario.h"
 #include "simulation/simulation.h"
 
-class LidDrivenCavity : public Scenario
+class LidDrivenCavity : public Simulation
 {
-private:
-	void initializeParticles(Simulation* sim);
-	void initializeBoundaries(Simulation* sim);
 public:
-	// Inherited via Scenario
-	void init(Simulation* sim) override;
-	void update(Simulation* sim) override;
+    LidDrivenCavity(const Settings &settings, const std::shared_ptr<KernelFunction> &kernel, MPI_Vars &mpiInfo);
 };

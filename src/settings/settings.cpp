@@ -90,14 +90,10 @@ Settings::Settings(const std::string& filename)
         std::string paramValue;
         line2nameAndValue(line, paramName, paramValue);
         if (paramName == "scenario") {
-            if (paramValue == "LidDrivenCavity") {
-                std::cout << "*************** Running LidDrivenCavity **********\n\n";
-                scenario = std::make_shared<LidDrivenCavity>();
-            }
-            else if (paramValue == "KarmanVortex") {
-                std::cout << "*************** Running KarmanVortex **********\n\n";
-                scenario = std::make_shared<KarmanVortex>();
-            }
+            if (paramValue == "LidDrivenCavity")
+                scenario = LID_DRIVEN_CAVITY;
+            else if (paramValue == "KarmanVortex")
+                scenario = KARMAN_VORTEX;
             else
                 throw std::invalid_argument("Scenario not recognized!");
         }
@@ -203,7 +199,7 @@ void Settings::calculateParameters()
 
 
 void Settings::printSettings() const {
-	std::cout << "========= Settings ==========\n"
+	std::cout << "\n========= Simulating " << scenario << " with settings: ==========\n"
               << "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << nParticles << std::endl
               << "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
               << "cells: " << nCells.x << " x " << nCells.y << std::endl
