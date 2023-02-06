@@ -2,6 +2,7 @@
 
 #include "pch.h"
 #include "../datastructures/vector.h"
+#include "scenario/scenario.h"
 
 /*
  * All settings that parametrize a simulation run.
@@ -24,18 +25,30 @@ inline std::ostream& operator<< (std::ostream& os, const Boundary& boundary) {
 enum KernelType
 {
     GAUSSIAN,
-    CUBIC
+    CUBIC_SPLINE
 };
+inline std::ostream& operator<< (std::ostream& os, const KernelType& kt) {
+    switch(kt) {
+        case GAUSSIAN:
+            return os << "Gaussian";
+        case CUBIC_SPLINE:
+            return os << "Cubic Spline";
+    }
+    return os;
+}
 
 struct Settings
 {
-    Settings(const std::string& filename);
+    explicit Settings(const std::string& filename);
+    //scenario to use
+    std::shared_ptr<Scenario> scenario;
+
     // constants
-    double kappa = 4;                           //< gas constant
-    double rho_0 = 3;                           //< rest density at zero pressure
-    double mass = 10.0;                         //< mass of an individual particle
-    double mu = 4;                              //< kinematic viscosity of the fluid
-    int nParticles = 100;
+    double kappa;                                   //< gas constant
+    double rho_0;                                   //< rest density at zero pressure
+    double mass;                                    //< mass of an individual particle
+    double mu;                                      //< kinematic viscosity of the fluid
+    int nParticles;                                 //< number of particles inside the domain
 
     // domain
     Vec2d physicalSize;                             //< dimensions of the domain
@@ -49,15 +62,15 @@ struct Settings
     // time
     double endTime = 10;
     double dt = 0.1;
-    bool dtFixed = true;
     double vs_dt = 1;
 
     //miscellaneous
     Vec2d g;                                        //< external forces
-    KernelType kernelFunction = GAUSSIAN;
+    KernelType kernelType;
     double smoothness;
 
-    void calculateSettings();
+    //! calculate parameters marked as auto and boundary particles
+    void calculateParameters();
 
     //! output all settings to console
     void printSettings() const;

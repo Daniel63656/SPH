@@ -4,8 +4,9 @@
 #include <sstream>
 #include <string>
 #include <filesystem>
+#include <utility>
 
-OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(path)
+OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(std::move(path))
 {
 	create_dirs();
 	//build_tree();
@@ -15,29 +16,15 @@ OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt, std::string path) :
 
 void OutputWriter::create_dirs()
 {
-
 	// create directories for the output files
-	bool created_dir = false;
-	created_dir = std::filesystem::create_directories(m_dir + "/time_series");
-	if (!created_dir)
+	if (!std::filesystem::create_directories(m_dir + "/time_series"))
 	{
-		std::cout << "Could not create directories!" << std::endl;
-		bool created_subdirs = std::filesystem::create_directories(m_dir + "/time_series/");
+		std::cout << "Did not create output directory!" << std::endl;
 	}
-	//for (int i = 0; i < m_mpi_info.processNo; i++)
-	//{
-	//	bool created_subdirs = std::filesystem::create_directories(m_dir + "/time_series/" + std::to_string(i));
-	//	if (created_subdirs)
-	//	{
-	//		std::cout << "Could not create subdirectory! " << i << std::endl;
-	//	}
-	//}
 }
 
 void OutputWriter::build_tree()
 {
-
-	std::cout << "particle size:    " << m_mpi_info.arrayend << std::endl;
 	pugi::xml_node vtkfile = m_doc.append_child("VTKFile");
 	vtkfile.append_attribute("type") = "PolyData";
 	vtkfile.append_attribute("version") = "0.1";
@@ -140,9 +127,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
 	{
 		Particle& particle = particles[i];
-		pos += particle.position.serialize().c_str();
-		vel += particle.velocity.serialize().c_str();
-		force += particle.forces.serialize().c_str();
+		pos += particle.position.serialize();
+		vel += particle.velocity.serialize();
+		force += particle.forces.serialize();
 		mass += std::to_string(particle.mass);
 		rho += std::to_string(particle.density);
 		pressure += std::to_string(particle.pressure);

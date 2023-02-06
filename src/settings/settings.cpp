@@ -2,6 +2,7 @@
 #include <cassert>
 #include "pch.h"
 #include "settings.h"
+#include "scenario/scenario_liddrivencavity.h"
 
 Settings::Settings(const std::string& filename)
 {
@@ -65,9 +66,8 @@ Settings::Settings(const std::string& filename)
                         std::string paramValue;
                         line2nameAndValue(line, paramName, paramValue);
 
-                        if (paramName == "nParticlesPerRow")
-                            boundary->m_nParticlesPerRow = atoi(paramValue.c_str());
-                        else if (paramName == "thickness")
+
+                        if (paramName == "thickness")
                             boundary->m_thickness = atoi(paramValue.c_str());
                         else if (paramName == "particleMass")
                             boundary->m_particleMass = atof(paramValue.c_str());
@@ -90,13 +90,25 @@ Settings::Settings(const std::string& filename)
         std::string paramName;
         std::string paramValue;
         line2nameAndValue(line, paramName, paramValue);
+        if (paramName == "scenario") {
+            if (paramValue == "LidDrivenCavity") {
+                std::cout << "*************** Running LidDrivenCavity **********\n\n";
+                scenario = std::make_shared<LidDrivenCavity>();
+            }
+            else
+                throw std::invalid_argument("Scenario not recognized!");
+        }
 
-        if (paramName == "kappa")
+        else if (paramName == "kappa")
             kappa = atof(paramValue.c_str());
         else if (paramName == "rho0")
             rho_0 = atof(paramValue.c_str());
-        else if (paramName == "mass")
-            mass = atof(paramValue.c_str());
+        else if (paramName == "mass") {
+            if (paramValue == "auto")
+                mass = -1;      //mark for auto calculation
+            else
+                mass = atof(paramValue.c_str());
+        }
         else if (paramName == "mu")
             mu = atof(paramValue.c_str());
         else if (paramName == "numberOfParticles")
@@ -115,10 +127,12 @@ Settings::Settings(const std::string& filename)
 
         else if (paramName == "endTime")
             endTime = atof(paramValue.c_str());
-        else if (paramName == "dtFixed")
-            dtFixed = (paramValue == "true") ? true : false;
-        else if (paramName == "dt")
-            dt = atof(paramValue.c_str());
+        else if (paramName == "dt") {
+            if (paramValue == "auto")
+                dt = -1;      //mark for auto calculation
+            else
+                dt = atof(paramValue.c_str());
+        }
         else if (paramName == "vs_dt")
             vs_dt = atof(paramValue.c_str());
 
@@ -126,79 +140,71 @@ Settings::Settings(const std::string& filename)
             g.x = atof(paramValue.c_str());
         else if (paramName == "gY")
             g.y = atof(paramValue.c_str());
-        else if (paramName == "kernelFunction")
-            kernelFunction = GAUSSIAN;
-        else if (paramName == "smoothness")
-            smoothness = atof(paramValue.c_str());
-
+        else if (paramName == "kernelFunction") {
+            if (paramValue == "Gaussian")
+                kernelType = GAUSSIAN;
+            else if (paramValue == "CubicSpline")
+                kernelType = CUBIC_SPLINE;
+            else {
+                kernelType = GAUSSIAN;
+                std::cout << "Kernel function not recognized. Defaulting to Gaussian...\n";
+            }
+        }
         else {
             std::cout << "unknown parameter";
         }
 	}
+
+    //calculate parameters marked as auto
+    calculateParameters();
 }
 
-
-void Settings::calculateSettings()
+//! calculate parameters marked as auto and boundary particles
+void Settings::calculateParameters()
 {
     double area = physicalSize.x * physicalSize.y;
-    mass = rho_0 * area / nParticles;
+    if (mass < 0)
+        mass = rho_0 * area / nParticles;
 
-    smoothness = sqrt((area * 20)/(M_PI * nParticles))/3;
+    //Set smoothness according to kernel
+    if (kernelType == GAUSSIAN)
+        smoothness = sqrt((area * 20)/(M_PI * nParticles))/3;
+    else if (kernelType == CUBIC_SPLINE)
+        smoothness = sqrt((area * 20)/(M_PI * nParticles))/2;
 
-    std::cout << mass << "mass" << std::endl;
-
-
-    if (!dtFixed)
-    {
+    //set dt to a reasonable value
+    if (dt < 0) {
         const double safety = 0.2;
         dt = ((smoothness) / 1.0) * safety;
     }
 
+
+    //set boundary number of particles to match density of particles inside domain
     Vec2i vParticles;
     vParticles.x = (int)std::lround(physicalSize.x * sqrt(nParticles / area));
     vParticles.y = nParticles / vParticles.x;
-    Vec2d spacing(physicalSize.x/(vParticles.x+1), physicalSize.y/(vParticles.y+1));
-
-
-   /* 
-    bottom = Boundary(vParticles.y, mass);
-    top    = Boundary(vParticles.y, mass);
-    left   = Boundary(vParticles.x, mass);
-    right  = Boundary(vParticles.x, mass);*/
 
     bottom.m_nParticlesPerRow = vParticles.y;
     top.m_nParticlesPerRow = vParticles.y;
     left.m_nParticlesPerRow = vParticles.x;
     right.m_nParticlesPerRow = vParticles.x;
-
-    bottom.m_particleMass = mass;
-    top.m_particleMass = mass;
-    left.m_particleMass = mass;
-    right.m_particleMass = mass;
-/*
-    bottom.m_thickness = 3;
-    top.m_thickness = 3;
-    left.m_thickness = 3;
-    right.m_thickness = 3;*/
-
 }
 
 
 
 void Settings::printSettings() const {
 	std::cout << "========= Settings ==========\n"
-        << "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << nParticles << std::endl
-		<< "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
-		<< "cells: " << nCells.x << " x " << nCells.y << std::endl
-        << "Bottom boundary: " << bottom << "\n"
-        << "Top    boundary: " << top << "\n"
-        << "Left   boundary: " << left << "\n"
-        << "Right  boundary: " << right << "\n"
-		<< "endTime: " << endTime << " in " << dt << " steps\n"
-		<< "dt fixed?: " << dtFixed << "\n"
-        << "Gravity: " << g <<"\n"
-		<< "Kernel: " << kernelFunction << "(" << smoothness << ")\n"
-        << "=============================\n\n";
+              << "kappa: " << kappa << ", rho0: " << rho_0 << ", mass: " << mass << ", mu: " << mu << ", nParticles: " << nParticles << std::endl
+              << "physicalSize: " << physicalSize.x << " x " << physicalSize.y << std::endl
+              << "cells: " << nCells.x << " x " << nCells.y << std::endl
+              << "Bottom boundary: " << bottom << "\n"
+              << "Top    boundary: " << top << "\n"
+              << "Left   boundary: " << left << "\n"
+              << "Right  boundary: " << right << "\n"
+              << "endTime: " << endTime << " in " << dt << " steps\n"
+              << "Gravity: " << g << "\n"
+              << "Kernel: " << kernelType << "(" << smoothness << ")\n"
+              << "=============================\n\n";
 }
 
 void Settings::line2nameAndValue(std::string line, std::string& paramName, std::string& paramValue) {
@@ -218,4 +224,8 @@ void Settings::line2nameAndValue(std::string line, std::string& paramName, std::
     int pos_eq = line.find_first_of('=');
     paramName = line.substr(0, pos_eq);
     paramValue = line.substr(pos_eq + 1);
+
+    //remove '\r' if '{' is in new line
+    if (paramValue[paramValue.size()-1] == '\r')
+        paramValue.erase(paramValue.size() - 1);
 }

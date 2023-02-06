@@ -1,34 +1,25 @@
 #include <cassert>
+#include <utility>
 #include "simulation.h"
 #include "datastructures/neighbourhood.h"
 #include "scenario/scenario_liddrivencavity.h"
 
-Simulation::Simulation(const Settings& settings, const KernelFunction* kernel, MPI_Vars& mpi_info) :
-	m_kernel(kernel),
+Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, std::shared_ptr<Scenario> scenario, MPI_Vars& mpi_info) :
+	m_kernel(std::move(kernel)),
+    m_scenario(std::move(scenario)),
 	m_settings(settings),
 	m_grid(settings),
 	m_mpi_info(mpi_info)
 {
-    m_scenario = std::make_shared<LidDrivenCavity>();
     m_scenario->init(this);
-	m_mpi_info.arrayend = m_particles.size() + m_boundaryparticles.size();
-}
-
-void Simulation::initializeParticles()
-{
-
-}
-
-void Simulation::initializeBoundaries()
-{
-
+	m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
 }
 
 void Simulation::run(OutputWriter& writer)
 {
 	writer.build_tree();
 	auto out = m_particles;
-	out.insert(out.end(), m_boundaryparticles.begin(), m_boundaryparticles.end());
+	out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
 	writer.write_vtp(out);
 
 	double time = 0;
@@ -46,7 +37,7 @@ void Simulation::run(OutputWriter& writer)
 
 		if (time >= next_write) {
 			auto out = m_particles;
-			out.insert(out.end(), m_boundaryparticles.begin(), m_boundaryparticles.end());
+			out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
 			writer.write_vtp(out);
 
 			next_write += m_settings.vs_dt;
@@ -91,9 +82,9 @@ void Simulation::calculateDensityAndPressure() {
 	}
 
 #pragma omp parallel for
-	for (int i = 0; i < m_boundaryparticles.size(); i++)
+	for (int i = 0; i < m_boundaryParticles.size(); i++)
 	{
-		auto& p = m_boundaryparticles[i];
+		auto& p = m_boundaryParticles[i];
 		calcDensityPresure(p);
 	}
 }
@@ -136,7 +127,7 @@ void Simulation::refillGrid()
 	{
 		m_grid.add(&p);
 	}
-	for (auto& p : m_boundaryparticles)
+	for (auto& p : m_boundaryParticles)
 	{
 		m_grid.add(&p);
 	}

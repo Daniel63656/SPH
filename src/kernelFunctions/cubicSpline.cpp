@@ -12,10 +12,10 @@ CubicSpline::CubicSpline(double smoothing) : KernelFunction(smoothing)
 double CubicSpline::W(Vec2d difference) const {
     double R = difference.magnitude()/h;
     if (R <= 1) {
-        return alpha * 2.0f/3 - R*R + pow(R, 3)/2;
+        return alpha * (2.0f/3 - R*R + pow(R, 3)/2);
     }
     else if (R <= 2) {
-        return alpha * 1.0f/6 * pow(2-R, 3);
+        return alpha * (1.0f/6 * pow(2-R, 3));
     }
     else return 0;
 }
@@ -35,7 +35,7 @@ Vec2d CubicSpline::gradW(Vec2d difference) const {
         return res;
     }
     else if (R <= 2) {
-        double factor = (2-R)*(2-R) / (2*R*h*h);
+        double factor = -(2-R)*(2-R) / (2*R*h*h);
         //for (int i = 0; i < 2; i++)
         //{
         //    res[i] = alpha*factor * difference[i];

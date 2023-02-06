@@ -11,6 +11,6 @@ private:
 	const double m_fillrate = 0.5;
 public:
 	// Inherited via Scenario
-	virtual void init(Simulation* sim) override;
+	void init(Simulation* sim) override;
 	virtual void update(Simulation* sim) override;
 };

@@ -6,14 +6,14 @@
 #include "settings/settings.h"
 #include "simulation/simulation.h"
 #include "kernelFunctions/gaussian.h"
+#include "kernelFunctions/cubicSpline.h"
 #include "output_writer/outputwriter.h"
-#include "pch.h"
 #include "utils/profiler.h"
+#include "scenario/scenario_liddrivencavity.h"
 
 
 int main(int argc, char* argv[])
 {
-
 	// try to read simulation parameters
 	if (argc == 1)
 	{
@@ -27,29 +27,33 @@ int main(int argc, char* argv[])
 
 	// instantiate settings object
 	Settings settings(filename);
-    settings.calculateSettings();
+    settings.calculateParameters();
 	settings.printSettings();
 
-	// tell omp to use as many threads as there are cores so it doesnt use hyperthreading
+    // instantiate kernel function
+    std::shared_ptr<KernelFunction> kernel;
+    if (settings.kernelType == GAUSSIAN)
+        kernel = std::make_shared<Gaussian>(settings.smoothness);
+    else if (settings.kernelType == CUBIC_SPLINE)
+        kernel = std::make_shared<CubicSpline>(settings.smoothness);
+
+	// tell omp to use as many threads as there are cores, so it doesn't use hyperthreading
 	const auto processor_count = std::thread::hardware_concurrency();
 	omp_set_num_threads(processor_count / 2);
 	std::cout << "processor_count: " << processor_count << " , using " << processor_count / 2 << std::endl;
 
-	Gaussian kernel(settings.smoothness);
     MPI_Vars info{0, 1, 0, settings.nParticles, settings.nParticles, 0};
-
     OutputWriter writer(info, settings.vs_dt, "out/");
 
-
-    Simulation simulation(settings, &kernel, info);
-	double taiming = 0.0;
+    Simulation simulation(settings, kernel, settings.scenario, info);
+	double timing = 0.0;
 	{
-		ProfilerScoped p(taiming);
+		ProfilerScoped p(timing);
 		simulation.run(writer);
 	}
 	auto NsToMs = [&](double ms) { return ms * 1e-6; };
 
-	std::cout << "time -> " << NsToMs(taiming) << std::endl;
+	std::cout << "time -> " << NsToMs(timing) << std::endl;
 
     writer.write_pvd("sim");
 

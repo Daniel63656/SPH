@@ -10,6 +10,6 @@ private:
 	void initializeBoundaries(Simulation* sim);
 public:
 	// Inherited via Scenario
-	virtual void init(Simulation* sim) override;
-	virtual void update(Simulation* sim) override;
+	void init(Simulation* sim) override;
+	void update(Simulation* sim) override;
 };
