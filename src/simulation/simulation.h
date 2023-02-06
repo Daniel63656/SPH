@@ -12,6 +12,7 @@ class Simulation
 {
 public:
     friend class LidDrivenCavity;
+    friend class KarmanVortex;
     friend class FillingBucket;
 
     Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, std::shared_ptr<Scenario> scenario, MPI_Vars& mpi_info);

@@ -4,15 +4,9 @@
 
 Grid::Grid(const Settings& settings) : m_settings(settings)
 {
-	//nTotal = 1;
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	meshWidth[i] = m_settings.physicalSize[i] / (float)m_settings.nCells[i];
-	//	nTotal *= m_settings.nCells[i];
-	//}
 	Vec2d size = m_settings.physicalSize;
-	size.x += 2.0 * m_settings.boundaryThickness;
-	size.y += 2.0 * m_settings.boundaryThickness;
+	size.x += m_settings.left.m_thickness + m_settings.right.m_thickness;
+	size.y += m_settings.top.m_thickness +  m_settings.bottom.m_thickness;
 	m_meshWidth = size / m_settings.nCells;
 	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
@@ -43,44 +37,6 @@ Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
 {
 	return Neighbourhood(this, center, radius);
 }
-
-
-//std::vector<Particle*> Grid::neighbours(const Vec2d& center, double radius) const
-//{
-//	//TODO implement as iterator
-//
-//	std::vector<Particle*> neighbours;
-//	//made x inner loop, so we traverse particle collection in the correct order
-//	//for (int i = 0; i < grid.size(); i++)
-//	//{
-//	//	for (Particle* p : grid[i])
-//	//	{
-//	//		if (euclideanDistance(p->position, center) <= radius)
-//	//		{
-//	//			neighbours.push_back(p);
-//	//		}
-//	//	}
-//	//}
-//
-//	Vec2i min = discretizedPosition(center - Vec2d(radius, radius));
-//	Vec2i max = discretizedPosition(center + Vec2d(radius, radius));
-//
-//	for (int y = min.y; y <= max.y; y++)
-//	{
-//		for (int x = min.x; x <= max.x; x++)
-//		{
-//			for (Particle* p : grid[pos2idx(Vec2i(x, y))])
-//			{
-//				if (euclideanDistance(p->position, center) <= radius)
-//				{
-//					neighbours.push_back(p);
-//				}
-//			}
-//		}
-//	}
-//
-//	return neighbours;
-//}
 
 
 Vec2i Grid::discretizedPosition(Vec2d v) const

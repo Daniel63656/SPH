@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "settings.h"
 #include "scenario/scenario_liddrivencavity.h"
+#include "scenario/scenario_karmanvortex.h"
 
 Settings::Settings(const std::string& filename)
 {
@@ -53,8 +54,6 @@ Settings::Settings(const std::string& filename)
                     boundary = &right;
 
                 assert(boundary != nullptr);
-                //preset particle mass in boundary to standard particle mass
-                boundary->m_particleMass = mass;
                 //read whole block
                 while (line.find('}') == std::string::npos)
                 {
@@ -95,6 +94,10 @@ Settings::Settings(const std::string& filename)
                 std::cout << "*************** Running LidDrivenCavity **********\n\n";
                 scenario = std::make_shared<LidDrivenCavity>();
             }
+            else if (paramValue == "KarmanVortex") {
+                std::cout << "*************** Running KarmanVortex **********\n\n";
+                scenario = std::make_shared<KarmanVortex>();
+            }
             else
                 throw std::invalid_argument("Scenario not recognized!");
         }
@@ -122,8 +125,6 @@ Settings::Settings(const std::string& filename)
             nCells.x = atoi(paramValue.c_str());
         else if (paramName == "nCellsY")
             nCells.y = atoi(paramValue.c_str());
-        else if (paramName == "boundaryThickness")
-            boundaryThickness = atof(paramValue.c_str());
 
         else if (paramName == "endTime")
             endTime = atof(paramValue.c_str());
@@ -178,6 +179,15 @@ void Settings::calculateParameters()
         dt = ((smoothness) / 1.0) * safety;
     }
 
+    //set boundary particle mass if not specified
+    if (bottom.m_particleMass < 0)
+        bottom.m_particleMass = mass;
+    if (top.m_particleMass < 0)
+        top.m_particleMass = mass;
+    if (left.m_particleMass < 0)
+        left.m_particleMass = mass;
+    if (right.m_particleMass < 0)
+        right.m_particleMass = mass;
 
     //set boundary number of particles to match density of particles inside domain
     Vec2i vParticles;

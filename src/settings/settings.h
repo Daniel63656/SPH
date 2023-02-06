@@ -53,11 +53,10 @@ struct Settings
     // domain
     Vec2d physicalSize;                             //< dimensions of the domain
     Vec2i nCells{};                                 //< number of cells in all spacial directions
-    double boundaryThickness;
-    Boundary bottom = Boundary(10, mass);
-    Boundary    top = Boundary(10, mass);
-    Boundary   left = Boundary(10, mass);
-    Boundary  right = Boundary(10, mass);
+    Boundary bottom = Boundary(10, -1);
+    Boundary    top = Boundary(10, -1);
+    Boundary   left = Boundary(10, -1);
+    Boundary  right = Boundary(10, -1);
     
     // time
     double endTime = 10;
