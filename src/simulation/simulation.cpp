@@ -25,22 +25,36 @@ void Simulation::run(OutputWriter& writer)
     //output initial state
 	writer.write_vtp(m_particles, m_boundaryParticles);
 
-	time = 0;
+	time = m_settings.dt;;
 	double next_write = m_settings.vs_dt;
     bool firstIteration = true;
+
+
 	refillGrid();
+
+    //first iteration with the adjusted leapfrog
+	calculateDensityAndPressure();
+	calculateForces();
+    leapfrogFirstIter();
+    update();
+    refillGrid();
+    if (time >= next_write) {
+        writer.write_vtp(m_particles, m_boundaryParticles);
+        next_write += m_settings.vs_dt;
+    }
+
+
+    //normal iteration steps afterwards
 	while (time < m_settings.endTime)
 	{
 		calculateDensityAndPressure();
 		calculateForces();
-        leapfrog(firstIteration);
-        firstIteration = false;
+        leapfrog();
         update();
 		refillGrid();
 
 		if (time >= next_write) {
 			writer.write_vtp(m_particles, m_boundaryParticles);
-
 			next_write += m_settings.vs_dt;
 		}
 
@@ -107,13 +121,26 @@ void Simulation::calculateForces()
 	}
 }
 
-void Simulation::leapfrog(bool firstIteration) {
-    const double dt_velocity = (0.5 + 0.5*(!firstIteration)) * m_settings.dt;
+void Simulation::leapfrogFirstIter()
+{
+    const double half_dt = 0.5 * m_settings.dt;
 #pragma omp parallel for
     for (int i = 0; i < m_particles.size(); i++)
     {
         auto& p = m_particles[i];
-        p.velocityAtHalfDt += dt_velocity * p.forces / p.density;
+        p.velocityAtHalfDt += half_dt * p.forces / p.density;
+        p.position += m_settings.dt * p.velocityAtHalfDt;
+        p.velocity = p.velocityAtHalfDt + half_dt * p.forces / p.density;
+    }
+}
+
+void Simulation::leapfrog()
+{
+#pragma omp parallel for
+    for (int i = 0; i < m_particles.size(); i++)
+    {
+        auto& p = m_particles[i];
+        p.velocityAtHalfDt += m_settings.dt * p.forces / p.density;
         p.position += m_settings.dt * p.velocityAtHalfDt;
         p.velocity = p.velocityAtHalfDt + m_settings.dt/2 * p.forces / p.density;
     }
