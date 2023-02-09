@@ -6,6 +6,7 @@
 
 class Neighbourhood;
 
+// Grid used for the Linked Cell Algorithm
 class Grid
 {
   public:
