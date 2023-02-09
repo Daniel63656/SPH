@@ -4,8 +4,8 @@
 #include "datastructures/neighbourhood.h"
 
 
-KarmanVortex::KarmanVortex(const Settings &settings, const std::shared_ptr<KernelFunction> &kernel, MPI_Vars &mpiInfo)
-        : Simulation(settings, kernel, mpiInfo) {}
+KarmanVortex::KarmanVortex(const Settings &settings, const std::shared_ptr<KernelFunction> &kernel)
+        : Simulation(settings, kernel) {}
 
 
 void KarmanVortex::initialize()

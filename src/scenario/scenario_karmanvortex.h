@@ -5,7 +5,7 @@
 class KarmanVortex : public Simulation
 {
 public:
-    KarmanVortex(const Settings &settings, const std::shared_ptr<KernelFunction> &kernel, MPI_Vars &mpiInfo);
+    KarmanVortex(const Settings &settings, const std::shared_ptr<KernelFunction> &kernel);
 
 private:
     Vec2i nParticles;

@@ -13,7 +13,7 @@ public:
     friend class KarmanVortex;
     friend class FillingBucket;
 
-    Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, MPI_Vars& mpi_info);
+    Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel);
 
     //! run the simulation
     //! @param vtkWriter optional: provide a VtkWriter so a paraview output gets created
@@ -29,7 +29,6 @@ private:
     Grid m_grid;
     std::vector<Particle> m_particles;
     std::vector<Particle> m_boundaryParticles;
-    MPI_Vars& m_mpi_info;
 
     virtual void initialize();
     virtual void calculateDensityAndPressure();
