@@ -11,7 +11,6 @@ class Simulation
   public:
 	friend class LidDrivenCavity;
 	friend class KarmanVortex;
-	friend class FillingBucket;
 
 	Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel);
 

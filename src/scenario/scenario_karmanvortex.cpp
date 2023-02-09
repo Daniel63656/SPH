@@ -8,12 +8,6 @@ KarmanVortex::KarmanVortex(const Settings& settings, const std::shared_ptr<Kerne
 {
 }
 
-void KarmanVortex::initialize()
-{
-	initializeParticles();
-	initializeBoundaries();
-}
-
 void KarmanVortex::initializeParticles()
 {
 	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
@@ -78,16 +72,23 @@ void KarmanVortex::calculateForces()
 		// make all particles at the beginning free of force
 		if (it->position.x > 0.6)
 		{
-			auto& p_i = it;
-			p_i->forces = p_i->density * m_settings.g;
-			for (const auto& p_j : m_grid.neighbours(p_i->position, m_kernel->effectiveRadius()))
+			auto& p_i = *it;
+
+			// apply gravity force
+			p_i.forces = p_i.density * m_settings.g;
+
+			// apply pressure and viscosity forces
+			for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 			{
-				double vol_i = p_i->mass / p_i->density;
-				double vol_j = p_j.mass / p_j.density;
-				p_i->forces += -(p_i->pressure * vol_i + p_j.pressure * vol_j) / 2 *
-								   m_kernel->gradW(p_i->position - p_j.position) +
-							   m_settings.mu * (p_j.velocity * vol_j - p_i->velocity * vol_i) / 2 *
-								   m_kernel->laplaceW(p_i->position - p_j.position);
+				const double vol_i = p_i.mass / p_i.density;
+				const double vol_j = p_j.mass / p_j.density;
+
+				const Vec2d pressure =
+					-0.5 * (p_i.pressure * vol_i + p_j.pressure * vol_j) * m_kernel->gradW(p_i.position - p_j.position);
+				const Vec2d viscosity = (m_settings.mu * 0.5) * (p_j.velocity * vol_j - p_i.velocity * vol_i) *
+										m_kernel->laplaceW(p_i.position - p_j.position);
+
+				p_i.forces += pressure + viscosity;
 			}
 		}
 		// despawn

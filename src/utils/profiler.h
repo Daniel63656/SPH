@@ -5,6 +5,7 @@
 class ProfilerScoped
 {
   public:
+	// writes the timing of this scope into the parameter out
 	ProfilerScoped(double& out) : output(out)
 	{
 		startTime = std::chrono::high_resolution_clock::now();

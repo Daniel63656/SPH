@@ -16,10 +16,9 @@ class KarmanVortex : public Simulation
 	int timeIt = 1;
 
 	bool insideObstacle(Vec2d pos);
-	const Vec2d obstaclePos = Vec2d({3, 1});
+	const Vec2d obstaclePos = Vec2d(3, 1);
 	const double obstacleRadius = 0.3;
 
-	void initialize() override;
 	void calculateForces() override;
 	void update() override;
 

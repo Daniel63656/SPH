@@ -111,10 +111,8 @@ void Simulation::calculateForces()
 			const double vol_i = p_i.mass / p_i.density;
 			const double vol_j = p_j.mass / p_j.density;
 
-			const Vec2d pressure =
-				-0.5 * (p_i.pressure * vol_i + p_j.pressure * vol_j) * m_kernel->gradW(p_i.position - p_j.position);
-			const Vec2d viscosity = (m_settings.mu / 2.0) * (p_j.velocity * vol_j - p_i.velocity * vol_i) *
-									m_kernel->laplaceW(p_i.position - p_j.position);
+			const Vec2d pressure = -0.5 * (p_i.pressure * vol_i + p_j.pressure * vol_j) * m_kernel->gradW(p_i.position - p_j.position);
+			const Vec2d viscosity = (m_settings.mu * 0.5) * (p_j.velocity * vol_j - p_i.velocity * vol_i) *	m_kernel->laplaceW(p_i.position - p_j.position);
 
 			p_i.forces += pressure + viscosity;
 		}
