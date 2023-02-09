@@ -36,7 +36,8 @@ private:
     virtual void update() {};
 
     void calculateDensityAndPressure(Particle& particle);
-    void leapfrog(bool firstIteration);
+    void leapfrogFirstIter();
+    void leapfrog();
     void refillGrid();
 
     void initializeParticles();

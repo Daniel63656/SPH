@@ -23,6 +23,7 @@ Grid::Grid(const Settings& settings) : m_settings(settings)
 
 void Grid::clear()
 {
+    //reset cell vectors, but don't deallocate the memory
 	for (int i = 0; i < nTotal; i++)
 		grid[i].clear();
 }
