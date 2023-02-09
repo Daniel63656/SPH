@@ -69,13 +69,13 @@ void Simulation::calculateDensityAndPressure(Particle& particle)
 
 void Simulation::calculateDensityAndPressure()
 {
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < m_particles.size(); i++)
 	{
         calculateDensityAndPressure(m_particles[i]);
 	}
 
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < m_boundaryParticles.size(); i++)
 	{
         calculateDensityAndPressure(m_boundaryParticles[i]);
@@ -85,7 +85,7 @@ void Simulation::calculateDensityAndPressure()
 
 void Simulation::calculateForces()
 {
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < m_particles.size(); i++)
 	{
 		auto& p_i = m_particles[i];

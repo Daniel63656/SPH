@@ -63,7 +63,6 @@ public:
 	Neighbourhood(Grid* grid, const Vec2d& center, double radius) : m_grid(grid), m_center(center), m_radius(radius)
 	{
 		nCells = grid->m_settings.nCells;
-		std::cout << "center " << center.x << ", " << center.y << " - rad " << radius << std::endl;
 	}
 
 	Iterator begin()
