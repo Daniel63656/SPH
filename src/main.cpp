@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 	}
 	auto NsToMs = [&](double ms) { return ms * 1e-6; };
 
-	std::cout << "time -> " << NsToMs(timing) << std::endl;
+	std::cout << "total simulation time: " << NsToMs(timing) << std::endl;
 
 	writer.write_pvd("sim.pvd");
 
