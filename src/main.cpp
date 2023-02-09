@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
     settings.calculateParameters();
 	settings.printSettings();
 
-
     // tell omp to use as many threads as there are cores, so it doesn't use hyperthreading
     const auto processor_count = std::thread::hardware_concurrency();
     omp_set_num_threads(processor_count / 2);

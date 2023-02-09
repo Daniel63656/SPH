@@ -11,7 +11,8 @@ Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction>
     {}
 
 
-void Simulation::initialize() {
+void Simulation::initialize()
+{
     initializeParticles();
     initializeBoundaries();
 }
@@ -55,16 +56,13 @@ Grid& Simulation::getGrid() {
 
 void Simulation::calculateDensityAndPressure(Particle& particle)
 {
-	double rho = 0;
-	bool hasNeighbours = false;
+	double rho = 0.0;
 
 	for (const auto& neighbour_particle : m_grid.neighbours(particle.position, m_kernel->effectiveRadius()))
 	{
-		hasNeighbours = true;
 		rho += neighbour_particle.mass * m_kernel->W(particle.position - neighbour_particle.position);
 	}
 
-	assert(hasNeighbours);
 	particle.density = rho;
 	particle.pressure = m_settings.kappa * (pow(rho / m_settings.rho_0, 7) - 1);
 }
@@ -74,15 +72,13 @@ void Simulation::calculateDensityAndPressure()
 #pragma omp parallel for
 	for (int i = 0; i < m_particles.size(); i++)
 	{
-		auto& p = m_particles[i];
-        calculateDensityAndPressure(p);
+        calculateDensityAndPressure(m_particles[i]);
 	}
 
 #pragma omp parallel for
 	for (int i = 0; i < m_boundaryParticles.size(); i++)
 	{
-		auto& p = m_boundaryParticles[i];
-        calculateDensityAndPressure(p);
+        calculateDensityAndPressure(m_boundaryParticles[i]);
 	}
 }
 
@@ -93,13 +89,20 @@ void Simulation::calculateForces()
 	for (int i = 0; i < m_particles.size(); i++)
 	{
 		auto& p_i = m_particles[i];
+
+		// apply gravity force
 		p_i.forces = p_i.density * m_settings.g;
+
+		// apply pressure and viscosity forces
 		for (const auto& p_j : m_grid.neighbours(p_i.position, m_kernel->effectiveRadius()))
 		{
-			double vol_i = p_i.mass / p_i.density;
-			double vol_j = p_j.mass / p_j.density;
-            p_i.forces +=          -(p_i.pressure*vol_i + p_j.pressure*vol_j) / 2 * m_kernel->   gradW(p_i.position - p_j.position)
-                    + m_settings.mu*(p_j.velocity*vol_j - p_i.velocity*vol_i) / 2 * m_kernel->laplaceW(p_i.position - p_j.position);
+			const double vol_i = p_i.mass / p_i.density;
+			const double vol_j = p_j.mass / p_j.density;
+
+			const Vec2d pressure = -0.5 * (p_i.pressure * vol_i + p_j.pressure * vol_j) * m_kernel->gradW(p_i.position - p_j.position);
+			const Vec2d viscosity = (m_settings.mu / 2.0) * (p_j.velocity * vol_j - p_i.velocity * vol_i) * m_kernel->laplaceW(p_i.position - p_j.position);
+
+			p_i.forces += pressure + viscosity;
         }
 	}
 }
