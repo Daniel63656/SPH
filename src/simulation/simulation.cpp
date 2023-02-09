@@ -162,6 +162,7 @@ void Simulation::refillGrid()
 
 void Simulation::initializeParticles()
 {
+    //place particles with constant rectangular spacing
     Vec2i nParticles;
     double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
     nParticles.x = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.nParticles / area));
@@ -179,6 +180,8 @@ void Simulation::initializeParticles()
 
 void Simulation::initializeBoundaries()
 {
+    //place boundary particles with equal spacing
+
     Vec2i nParticles;
     double area = m_settings.physicalSize.x * m_settings.physicalSize.y;
     nParticles.x = (int)std::lround(m_settings.physicalSize.x * sqrt(m_settings.nParticles / area));
