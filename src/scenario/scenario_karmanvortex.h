@@ -11,13 +11,13 @@ private:
     Vec2i nParticles;
     Vec2d spacing;
 
-    double velocity = 1;    //velocity in x direction of stream
+    double velocity = 0.45;    //velocity in x direction of stream
     double respawnTime;
     int timeIt = 1;
 
     bool insideObstacle(Vec2d pos);
     const Vec2d obstaclePos = Vec2d({3, 1});
-    const double obstacleRadius = 0.35;
+    const double obstacleRadius = 0.3;
 
     void initialize() override;
     void calculateForces() override;
