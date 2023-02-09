@@ -78,14 +78,14 @@ void KarmanVortex::calculateForces() {
                 double vol_i = p_i->mass / p_i->density;
                 double vol_j = p_j.mass / p_j.density;
                 p_i->forces +=          -(p_i->pressure*vol_i + p_j.pressure*vol_j) / 2 * m_kernel->   gradW(p_i->position - p_j.position)
-                                       + m_settings.mu*(p_j.velocity*vol_j - p_i->velocity*vol_i) / 2 * m_kernel->laplaceW(p_i->position - p_j.position);
+                                        + m_settings.mu*(p_j.velocity*vol_j - p_i->velocity*vol_i) / 2 * m_kernel->laplaceW(p_i->position - p_j.position);
             }
         }
         //despawn
-      /* if (it->position.x > 10) {
+        if (it->position.x > m_settings.physicalSize.x - 0.1) {
             it = m_particles.erase(it);
             continue;  //skip ++it
-        }*/
+        }
         ++it;
     }
 }
@@ -94,9 +94,6 @@ void KarmanVortex::update() {
     //spawn new particles
     if (time > timeIt*respawnTime) {
         timeIt++;
-        for (int y = 0; y < nParticles.y; y++) {
-            m_particles.erase(m_particles.end() - 1);
-        }
         for (int y = 0; y < nParticles.y; y++) {
             Vec2d pos = Vec2d(spacing.x, (y + 1) * spacing.y);
             Particle p = Particle(m_settings.mass, pos, Vec2d(velocity, 0));

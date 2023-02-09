@@ -15,15 +15,15 @@ numberOfParticles = 5000
 physicalSizeX = 10.0           # physical size of the domain
 physicalSizeY = 2.0
 nCellsX = 128                  # number of cells in all spacial directions
-nCellsY = 128
+nCellsY = 32
 
 Boundary top {
     thickness = 3;
-    velocityX = 0.45;
+    velocityX = 0.42;
 }
 Boundary bottom {
     thickness = 3;
-    velocityX = 0.45;
+    velocityX = 0.42;
 }
 Boundary left {
     thickness = 0;
@@ -33,7 +33,7 @@ Boundary right {
 }
 
 # time
-endTime = 20.0
+endTime = 12.0
 dt = auto                       # simulation stepping time. Using [auto] assigns a safe value in terms of simulation stability
 vs_dt = 0.2
 

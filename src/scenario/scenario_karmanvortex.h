@@ -11,7 +11,7 @@ private:
     Vec2i nParticles;
     Vec2d spacing;
 
-    double velocity = 0.45;    //velocity in x direction of stream
+    double velocity = 0.42;    //velocity in x direction of stream
     double respawnTime;
     int timeIt = 1;
 
