@@ -14,8 +14,8 @@ numberOfParticles = 3000
 # domain
 physicalSizeX = 10.0           # physical size of the domain
 physicalSizeY = 2.0
-nCellsX = 128                  # number of cells in all spacial directions
-nCellsY = 128
+nCellsX = 4                  # number of cells in all spacial directions
+nCellsY = 10
 
 Boundary top {
     thickness = 3;

@@ -123,6 +123,6 @@ template<typename T> std::ostream& operator<<(std::ostream& os, const Vec2<T>& v
 	return os << "[" << v.x << ", " << v.y << "]";
 }
 
-typedef Vec2<double> Vec2d;
-typedef Vec2<int> Vec2i;
-typedef Vec2<float> Vec2f;
+typedef Vec2<double> Vec2d; //two dimensional vector with double type per component
+typedef Vec2<int> Vec2i; //two dimensional vector with int type per component
+typedef Vec2<float> Vec2f; //two dimensional vector with float type per component

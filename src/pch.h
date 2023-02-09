@@ -18,13 +18,9 @@
 #include <time.h>
 #include <memory>
 #include <sstream>
-// mpi
-//#include "mpi.h"
 
 // openmp
-//#include <omp.h>
-#include "pugixml.hpp"
+#include <omp.h>
 
-// fmt
-//#define FMT_HEADER_ONLY
-// #include "fmt/format.h"
+// pugixml
+#include "pugixml.hpp"
