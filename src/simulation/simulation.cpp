@@ -4,11 +4,10 @@
 #include "datastructures/neighbourhood.h"
 #include "scenario/scenario_liddrivencavity.h"
 
-Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel, MPI_Vars& mpi_info) :
+Simulation::Simulation(const Settings& settings, std::shared_ptr<KernelFunction> kernel) :
 	m_kernel(std::move(kernel)),
 	m_settings(settings),
-	m_grid(settings),
-	m_mpi_info(mpi_info)
+	m_grid(settings)
     {}
 
 
@@ -21,13 +20,10 @@ void Simulation::initialize()
 void Simulation::run(OutputWriter& writer)
 {
     initialize();
-    m_mpi_info.arrayend = m_particles.size() + m_boundaryParticles.size();
     writer.build_tree();
 
     //output initial state
-	auto out = m_particles;
-	out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
-	writer.write_vtp(out);
+	writer.write_vtp(m_particles, m_boundaryParticles);
 
 	time = 0;
 	double next_write = m_settings.vs_dt;
@@ -42,11 +38,8 @@ void Simulation::run(OutputWriter& writer)
         update();
 		refillGrid();
 
-		if (time >= next_write)
-		{
-			auto out = m_particles;
-			out.insert(out.end(), m_boundaryParticles.begin(), m_boundaryParticles.end());
-			writer.write_vtp(out);
+		if (time >= next_write) {
+			writer.write_vtp(m_particles, m_boundaryParticles);
 
 			next_write += m_settings.vs_dt;
 		}

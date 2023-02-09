@@ -1,16 +1,15 @@
 #include "../datastructures/particle.h"
 #include "../output_writer/outputwriter.h"
-#include "body.h"
 #include <sstream>
 #include <string>
 #include <filesystem>
 #include <utility>
 
-OutputWriter::OutputWriter(MPI_Vars& mpi_info, double vs_dt, std::string path) : m_mpi_info(mpi_info), m_vs_dt(vs_dt), m_dir(std::move(path))
+OutputWriter::OutputWriter(double vs_dt, std::string path) :  m_vs_dt(vs_dt), m_dir(std::move(path))
 {
 	create_dirs();
 	m_step = 0;
-	m_path = m_dir + std::string("time_series/") + std::string("sim_");
+	m_path = std::string("time_series/") + std::string("sim_");
 }
 
 void OutputWriter::create_dirs()
@@ -31,8 +30,8 @@ void OutputWriter::build_tree()
 	vtkfile.append_attribute("header_type") = "UInt64";
 	pugi::xml_node polydata = vtkfile.append_child("PolyData");
 	pugi::xml_node piece = polydata.append_child("Piece");
-	piece.append_attribute("NumberOfPoints") = m_mpi_info.arrayend - m_mpi_info.arraystart;
-	piece.append_attribute("NumberOfVerts") = m_mpi_info.arrayend - m_mpi_info.arraystart;
+	m_numberOfPoints = piece.append_attribute("NumberOfPoints") = 0;
+	m_numberOfVertices = piece.append_attribute("NumberOfVerts") = 0;
 
 	// position
 	pugi::xml_node points = piece.append_child("Points");
@@ -85,37 +84,25 @@ void OutputWriter::build_tree()
 	m_pressure.append_attribute("format") = "ascii";
 
 
-	//
+	//verts
 	pugi::xml_node verts = piece.append_child("Verts");
 	m_verts = verts.append_child("DataArray");
 	m_verts.append_attribute("type") = "Int64";
 	m_verts.append_attribute("Name") = "offsets";
 
-	std::string out = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	{
-		out += std::to_string(i + 1 - m_mpi_info.arraystart) + " ";
-	}
-	m_verts.text() = out.c_str();
 
 	//connectivity
 	m_conn = verts.append_child("DataArray");
 	m_conn.append_attribute("type") = "Int64";
 	m_conn.append_attribute("Name") = "connectivity";
-
-	out = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
-	{
-		out += std::to_string(i - m_mpi_info.arraystart) + " ";
-	}
-	m_conn.text() = out.c_str();
-
-
 }
 
 
-void OutputWriter::write_vtp(std::vector<Particle>& particles)
+void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Particle>& boundary)
 {
+    m_numberOfPoints.set_value(particles.size() + boundary.size());
+    m_numberOfVertices.set_value(particles.size() + boundary.size());
+
 	// position
 	std::string pos = "\n";
 	std::string vel = "\n";
@@ -123,7 +110,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 	std::string mass = "\n";
 	std::string rho = "\n";
 	std::string pressure = "\n";
-	for (int i = m_mpi_info.arraystart; i < m_mpi_info.arrayend; i++)
+    std::string verts = "\n";
+    std::string conn = "\n";
+	for (int i = 0; i < particles.size(); i++)
 	{
 		Particle& particle = particles[i];
 		pos += particle.position.serialize();
@@ -138,22 +127,44 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles)
 		mass += "\n";
 		rho += "\n";
 		pressure += "\n";
+        verts += std::to_string(i+1) + " ";
+        conn += std::to_string(i) + " ";
 	}
+
+
+	for (int i = 0; i < boundary.size(); i++)
+	{
+		Particle& particle = boundary[i];
+		pos += particle.position.serialize();
+		vel += particle.velocity.serialize();
+		force += particle.forces.serialize();
+		mass += std::to_string(particle.mass);
+		rho += std::to_string(particle.density);
+		pressure += std::to_string(particle.pressure);
+		pos += "\n";
+		vel += "\n";
+		force += "\n";
+		mass += "\n";
+		rho += "\n";
+		pressure += "\n";
+        verts += std::to_string(i+1+particles.size()) + " ";
+        conn += std::to_string(i+particles.size()) + " ";
+    }
+
+
+
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
 	m_forces.text() = force.c_str();
 	m_mass.text() = mass.c_str();
 	m_rho.text() = rho.c_str();
 	m_pressure.text() = pressure.c_str();
+    m_verts.text() = verts.c_str();
+    m_conn.text() = conn.c_str();
 
-
-	//m_kin_e.text() = m_glob.kin_e;
-	//m_rot_e.text() = m_glob.rot_e;
-	//m_pot_e.text() = m_glob.pot_e;
-	//m_total_e.text() = m_glob.total;
 
 	std::ofstream outFile;
-	outFile.open(m_path + std::to_string(m_step) + std::string(".vtp"));
+	outFile.open(m_dir + m_path + std::to_string(m_step) + std::string(".vtp"));
 	m_doc.save(outFile);
 	outFile.close();
 
@@ -185,15 +196,12 @@ void OutputWriter::write_pvd(const std::string& filename)
 	for (int i = 0; i < m_step; i++)
 	{
 		time += m_vs_dt;
-		for (int j = 0; j < m_mpi_info.processNo; j++)
-		{
-			dataset = collection.append_child("DataSet");
-			dataset.append_attribute("timestep") = scientific(time).c_str();
-			dataset.append_attribute("group") = "";
-			dataset.append_attribute("part") = j;
-			std::string out = "time_series/" + std::to_string(j) + "/sim_" + std::to_string(i) + ".vtp";
-			dataset.append_attribute("file") = out.c_str();
-		}
+        dataset = collection.append_child("DataSet");
+        dataset.append_attribute("timestep") = scientific(time).c_str();
+        dataset.append_attribute("group") = "";
+        dataset.append_attribute("part") = "";
+        std::string out = m_path + std::to_string(i) + ".vtp";
+        dataset.append_attribute("file") = out.c_str();
 	}
 
 	std::ofstream outFile;

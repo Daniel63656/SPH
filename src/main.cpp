@@ -2,7 +2,6 @@
 #include <array>
 #include <thread>
 #include <omp.h>
-#include "output_writer/body.h"
 #include "settings/settings.h"
 #include "simulation/simulation.h"
 #include "kernelFunctions/gaussian.h"
@@ -36,8 +35,7 @@ int main(int argc, char* argv[])
     omp_set_num_threads(processor_count / 2);
     std::cout << "processor_count: " << processor_count << " , using " << processor_count / 2 << std::endl;
 
-    MPI_Vars info{0, 1, 0, settings.nParticles, settings.nParticles, 0};
-    OutputWriter writer(info, settings.vs_dt, "out/");
+    OutputWriter writer(settings.vs_dt, "out/");
 
 
     // instantiate kernel function
@@ -51,9 +49,9 @@ int main(int argc, char* argv[])
     // instantiate simulation scenario
     std::shared_ptr<Simulation> simulation;
     if (settings.scenario == LID_DRIVEN_CAVITY)
-        simulation = std::make_shared<LidDrivenCavity>(settings, kernel, info);
+        simulation = std::make_shared<LidDrivenCavity>(settings, kernel);
     else if (settings.scenario == KARMAN_VORTEX)
-        simulation = std::make_shared<KarmanVortex>(settings, kernel, info);
+        simulation = std::make_shared<KarmanVortex>(settings, kernel);
 
 
     //start profiler and run simulation
@@ -66,7 +64,7 @@ int main(int argc, char* argv[])
 
 	std::cout << "time -> " << NsToMs(timing) << std::endl;
 
-    writer.write_pvd("sim");
+    writer.write_pvd("sim.pvd");
 
 	return EXIT_SUCCESS;
 }
