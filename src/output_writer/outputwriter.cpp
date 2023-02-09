@@ -1,11 +1,7 @@
-#include "../datastructures/particle.h"
 #include "../output_writer/outputwriter.h"
-#include <sstream>
-#include <string>
-#include <filesystem>
-#include <utility>
+#include "../datastructures/particle.h"
 
-OutputWriter::OutputWriter(double vs_dt, std::string path) :  m_vs_dt(vs_dt), m_dir(std::move(path))
+OutputWriter::OutputWriter(double vs_dt, std::string path) : m_vs_dt(vs_dt), m_dir(std::move(path))
 {
 	create_dirs();
 	m_step = 0;
@@ -41,7 +37,6 @@ void OutputWriter::build_tree()
 	m_position.append_attribute("NumberOfComponents") = "3";
 	m_position.append_attribute("format") = "ascii";
 
-
 	pugi::xml_node pointdata = piece.append_child("PointData");
 
 	// velocity
@@ -51,14 +46,12 @@ void OutputWriter::build_tree()
 	m_velocity.append_attribute("NumberOfComponents") = "3";
 	m_velocity.append_attribute("format") = "ascii";
 
-
 	// acceleration
 	m_forces = pointdata.append_child("DataArray");
 	m_forces.append_attribute("type") = "Float64";
 	m_forces.append_attribute("Name") = "force";
 	m_forces.append_attribute("NumberOfComponents") = "3";
 	m_forces.append_attribute("format") = "ascii";
-
 
 	// angle
 	m_mass = pointdata.append_child("DataArray");
@@ -67,14 +60,12 @@ void OutputWriter::build_tree()
 	m_mass.append_attribute("NumberOfComponents") = "1";
 	m_mass.append_attribute("format") = "ascii";
 
-
 	// omega
 	m_rho = pointdata.append_child("DataArray");
 	m_rho.append_attribute("type") = "Float64";
 	m_rho.append_attribute("Name") = "rho";
 	m_rho.append_attribute("NumberOfComponents") = "1";
 	m_rho.append_attribute("format") = "ascii";
-
 
 	// alpha
 	m_pressure = pointdata.append_child("DataArray");
@@ -83,25 +74,22 @@ void OutputWriter::build_tree()
 	m_pressure.append_attribute("NumberOfComponents") = "1";
 	m_pressure.append_attribute("format") = "ascii";
 
-
-	//verts
+	// verts
 	pugi::xml_node verts = piece.append_child("Verts");
 	m_verts = verts.append_child("DataArray");
 	m_verts.append_attribute("type") = "Int64";
 	m_verts.append_attribute("Name") = "offsets";
 
-
-	//connectivity
+	// connectivity
 	m_conn = verts.append_child("DataArray");
 	m_conn.append_attribute("type") = "Int64";
 	m_conn.append_attribute("Name") = "connectivity";
 }
 
-
 void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Particle>& boundary)
 {
-    m_numberOfPoints.set_value(particles.size() + boundary.size());
-    m_numberOfVertices.set_value(particles.size() + boundary.size());
+	m_numberOfPoints.set_value(particles.size() + boundary.size());
+	m_numberOfVertices.set_value(particles.size() + boundary.size());
 
 	// position
 	std::string pos = "\n";
@@ -110,8 +98,8 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Parti
 	std::string mass = "\n";
 	std::string rho = "\n";
 	std::string pressure = "\n";
-    std::string verts = "\n";
-    std::string conn = "\n";
+	std::string verts = "\n";
+	std::string conn = "\n";
 	for (int i = 0; i < particles.size(); i++)
 	{
 		Particle& particle = particles[i];
@@ -127,10 +115,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Parti
 		mass += "\n";
 		rho += "\n";
 		pressure += "\n";
-        verts += std::to_string(i+1) + " ";
-        conn += std::to_string(i) + " ";
+		verts += std::to_string(i + 1) + " ";
+		conn += std::to_string(i) + " ";
 	}
-
 
 	for (int i = 0; i < boundary.size(); i++)
 	{
@@ -147,11 +134,9 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Parti
 		mass += "\n";
 		rho += "\n";
 		pressure += "\n";
-        verts += std::to_string(i+1+particles.size()) + " ";
-        conn += std::to_string(i+particles.size()) + " ";
-    }
-
-
+		verts += std::to_string(i + 1 + particles.size()) + " ";
+		conn += std::to_string(i + particles.size()) + " ";
+	}
 
 	m_position.text() = pos.c_str();
 	m_velocity.text() = vel.c_str();
@@ -159,9 +144,8 @@ void OutputWriter::write_vtp(std::vector<Particle>& particles, std::vector<Parti
 	m_mass.text() = mass.c_str();
 	m_rho.text() = rho.c_str();
 	m_pressure.text() = pressure.c_str();
-    m_verts.text() = verts.c_str();
-    m_conn.text() = conn.c_str();
-
+	m_verts.text() = verts.c_str();
+	m_conn.text() = conn.c_str();
 
 	std::ofstream outFile;
 	outFile.open(m_dir + m_path + std::to_string(m_step) + std::string(".vtp"));
@@ -196,12 +180,12 @@ void OutputWriter::write_pvd(const std::string& filename)
 	for (int i = 0; i < m_step; i++)
 	{
 		time += m_vs_dt;
-        dataset = collection.append_child("DataSet");
-        dataset.append_attribute("timestep") = scientific(time).c_str();
-        dataset.append_attribute("group") = "";
-        dataset.append_attribute("part") = "";
-        std::string out = m_path + std::to_string(i) + ".vtp";
-        dataset.append_attribute("file") = out.c_str();
+		dataset = collection.append_child("DataSet");
+		dataset.append_attribute("timestep") = scientific(time).c_str();
+		dataset.append_attribute("group") = "";
+		dataset.append_attribute("part") = "";
+		std::string out = m_path + std::to_string(i) + ".vtp";
+		dataset.append_attribute("file") = out.c_str();
 	}
 
 	std::ofstream outFile;

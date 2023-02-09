@@ -1,18 +1,18 @@
 #include "grid.h"
-#include "particle.h"
 #include "neighbourhood.h"
+#include "particle.h"
 
 Grid::Grid(const Settings& settings) : m_settings(settings)
 {
 	// the grid encloses all simulated and boundary particles
 	Vec2d size = m_settings.physicalSize;
 	size.x += m_settings.left.m_thickness + m_settings.right.m_thickness;
-	size.y += m_settings.top.m_thickness +  m_settings.bottom.m_thickness;
+	size.y += m_settings.top.m_thickness + m_settings.bottom.m_thickness;
 	m_meshWidth = size / m_settings.nCells;
 
 	nTotal = m_settings.nCells.x * m_settings.nCells.y;
 
-	//initialize vectors for each gridCell
+	// initialize vectors for each gridCell
 	grid.reserve(nTotal);
 	for (int i = 0; i < nTotal; i++)
 	{
@@ -20,14 +20,12 @@ Grid::Grid(const Settings& settings) : m_settings(settings)
 	}
 }
 
-
 void Grid::clear()
 {
-    //reset cell vectors, but don't deallocate the memory
+	// reset cell vectors, but don't deallocate the memory
 	for (int i = 0; i < nTotal; i++)
 		grid[i].clear();
 }
-
 
 void Grid::add(Particle* p)
 {
@@ -40,7 +38,6 @@ Neighbourhood Grid::neighbours(const Vec2d& center, double radius)
 {
 	return Neighbourhood(this, center, radius);
 }
-
 
 Vec2i Grid::discretizedPosition(Vec2d v) const
 {

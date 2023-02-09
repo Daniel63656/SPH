@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE source_files "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 file(GLOB_RECURSE header_files "${CMAKE_CURRENT_LIST_DIR}/src/*.h")
 
-add_executable(${PROJECT_NAME} ${source_files} ${header_files} src/utils/profiler.h)
+add_executable(${PROJECT_NAME} ${source_files} ${header_files})
 
 # tell cmake to use the given precompiled header
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src/pch.h)

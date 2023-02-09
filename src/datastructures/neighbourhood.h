@@ -4,17 +4,18 @@
 
 class Neighbourhood
 {
-public:
+  public:
 	using ValueType = Particle;
-public:
 
+  public:
 	class NeighbourhoodIterator
 	{
-	public:
+	  public:
 		using ValueType = typename Neighbourhood::ValueType;
 		using PointerType = ValueType*;
 		using ReferenceType = ValueType&;
-	public:
+
+	  public:
 		NeighbourhoodIterator(Neighbourhood* n, size_t outer, size_t inner);
 
 		void findNextElement();
@@ -47,17 +48,17 @@ public:
 			return (index_inner != other.index_inner) || (index_outer != other.index_outer);
 		}
 
-	private:
+	  private:
 		Neighbourhood* m_ptr;
 		int index_outer; // current cell
 		int index_inner; // current index in our cell
 
-		Vec2i min; // 2d index into our grid, marks the lower left cell of our cells in the search area
-		Vec2i max; // 2d index into our grid, marks the upper right cell of our search area
+		Vec2i min;	   // 2d index into our grid, marks the lower left cell of our cells in the search area
+		Vec2i max;	   // 2d index into our grid, marks the upper right cell of our search area
 		int end_index; // cell index, marks our end
 	};
 
-public:
+  public:
 	using Iterator = NeighbourhoodIterator;
 
 	Neighbourhood(Grid* grid, const Vec2d& center, double radius) : m_grid(grid), m_center(center), m_radius(radius)
@@ -67,7 +68,7 @@ public:
 
 	Iterator begin()
 	{
-		int min = m_grid->pos2idx( m_grid->discretizedPosition(m_center - Vec2d(m_radius)));
+		int min = m_grid->pos2idx(m_grid->discretizedPosition(m_center - Vec2d(m_radius)));
 		Iterator it(this, min, 0);
 		if (!getGrid()[min].empty() && euclideanDistance(getCenter(), (getGrid())[min][0]->position) <= getRadius())
 		{
@@ -107,9 +108,10 @@ public:
 		return m_radius;
 	}
 
-public:
+  public:
 	Vec2i nCells;
-private:
+
+  private:
 	Grid* m_grid;
 	Vec2d m_center;
 	double m_radius;

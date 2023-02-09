@@ -7,17 +7,21 @@
 
 class KernelFunction
 {
-public:
-    explicit KernelFunction(double smoothing) : h{smoothing}
-    {}
+  public:
+	explicit KernelFunction(double smoothing) : h{smoothing}
+	{
+	}
 
-    double smoothness() const { return h; };
+	double smoothness() const
+	{
+		return h;
+	};
 
-    virtual double W(Vec2d difference) const = 0;
-    virtual Vec2d gradW(Vec2d difference) const = 0;
-    virtual double laplaceW(Vec2d difference) const = 0;
-    virtual double effectiveRadius() const = 0;
+	virtual double W(Vec2d difference) const = 0;
+	virtual Vec2d gradW(Vec2d difference) const = 0;
+	virtual double laplaceW(Vec2d difference) const = 0;
+	virtual double effectiveRadius() const = 0;
 
-protected:
-    double h;
+  protected:
+	double h;
 };
