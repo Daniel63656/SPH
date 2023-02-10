@@ -8,6 +8,13 @@ KarmanVortex::KarmanVortex(const Settings& settings, const std::shared_ptr<Kerne
 {
 }
 
+
+void KarmanVortex::initialize()
+{
+	initializeParticles();
+	initializeBoundaries();
+}
+
 void KarmanVortex::initializeParticles()
 {
 	double area = m_settings.physicalSize.x * m_settings.physicalSize.y;

@@ -34,7 +34,7 @@ Boundary right {
 }
 
 # time
-endTime = 30.0
+endTime = 10.0
 dt = auto                       # simulation stepping time. Using [auto] assigns a safe value in terms of simulation stability
 vs_dt = 0.1
 
