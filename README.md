@@ -26,8 +26,8 @@ After the program terminates, simulation results can be found in the `out` folde
 
 ## Simulation Results
 ### Lid Driven Cavity
-<img src="docs/lidDrivenCavity.gif" width="380" height="300" />
-<img src="docs/lid.png" width="300" height="300" />
+![lid](docs/lidDrivenCavity.gif)
+![lid](docs/lid.png)
 
 ### Karman Vortex Street
 
