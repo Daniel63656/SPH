@@ -26,4 +26,4 @@ After the program terminates, simulation results can be found in the `out` folde
 
 ## Simulation Results
 
-[Watch the simulation video](docs/karmanVortex.mp4)
+[lid](docs/lidDrivenCavity.gif)
