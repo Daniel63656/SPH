@@ -1,26 +1,29 @@
-# Smoothed Particle Hydrodynamis Solver
+# Smoothed Particle Hydrodynamics Solver
 
-This project implements the Smoothed Particle Hydrodynamis (SPH) approach in C++ using openMP for parallel execution.
-Both Gaussian kernel and cubicSpline kernel are implemented as kernel functions. Simulation results are written
-to be viewed with **ParaView**. 
+This project implements the **Smoothed Particle Hydrodynamics (SPH)** approach in C++ using **OpenMP** for parallel execution.
+Both Gaussian kernel and cubic spline kernel functions are available for the simulation.
+The simulation results are formatted for visualization in **ParaView**.
 
-## Getting Started
+## Usage
 
-To run the simulations yourself, first clone the repository and navigate to it:
+To run the simulations yourself, clone the repository and navigate to the project directory:
 ```bash
   git clone https://github.com/Daniel63656/SPH.git
   cd SPH
   ```
-
-This project uses vcpkg to build the project with its dependencies (pugixml). To build the project, use your specific
-vcpkg installation to build the project with all its dependencies.
-
-Navigate to the project directory and run the publishToMavenLocal gradle task:
+### Build the Project
+This project uses **vcpkg** for dependency management. To build the project with all its dependencies, configure your
+specific vcpkg installation to be used during build:
 ```bash
   cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=PATH_TO_YOUR_VCPKG_INSTALL/scripts/buildsystems/vcpkg.cmake
-  cmake --build cmake-build-debug
+  cmake --build build
   ```
-Run a simulation:
+### Run a simulation:
 ```bash
-  cmake-build-debug\Debug\SPH.exe karmanVortex.txt
+  build\Debug\SPH.exe karmanVortex.txt
  ```
+After the program terminates, simulation results can be found in the `out` folder.
+
+## Simulation Results
+
+[Watch the simulation video](docs/lidDrivenCavity.mp4)
