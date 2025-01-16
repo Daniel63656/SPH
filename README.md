@@ -25,5 +25,10 @@ specific vcpkg installation to be used during build:
 After the program terminates, simulation results can be found in the `out` folder.
 
 ## Simulation Results
+### Lid Driven Cavity
+<img src="docs/lidDrivenCavity.gif" width="380" height="300" />
+<img src="docs/lid.png" width="300" height="300" />
 
-[lid](docs/lidDrivenCavity.gif)
+### Karman Vortex Street
+
+![lid](docs/karmanVortex.gif)
